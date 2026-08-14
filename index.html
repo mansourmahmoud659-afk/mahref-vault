@@ -1,262 +1,273 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>رقيب الخزنة الذكي - المنصة المستقلة</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: 'Tajawal', sans-serif; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رقيب الخزنة الذكي - Vault Pro 2026</title>
+    <!-- Tailwind CSS & Lucide Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- React & Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Chart.js & Tesseract.js (OCR) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    
+    <!-- Google Fonts (Tajawal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #0b132b; color: #e0e1dd; }
+        .gold-border { border: 1px solid #d4af37; }
+        .gold-text { color: #d4af37; }
+        .luxury-card { background: linear-gradient(145deg, #1c2541, #0b132b); border: 1px solid #3a506b; }
+        .active-tab { background: #10b981; color: #0b132b; font-weight: bold; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
+<body class="min-h-screen">
 
-  <div id="root"></div>
+<div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+<script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-    // 🔗 ربط السوبابيز
-    const supabaseUrl = "https://ysmqmhhkbmkhaenkplmw.supabase.co";
-    const supabaseAnonKey = ""; // سيبها فاضية مؤقتاً
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey || "dummy-key");
+    function App() {
+        const [activeTab, setActiveTab] = useState('input');
+        const [auth, setAuth] = useState(false);
+        const [passCode, setPassCode] = useState('');
 
-    function VaultApp() {
-      // حالة الحماية والتفعيل
-      const [licenseKey, setLicenseKey] = useState("");
-      const [isActivated, setIsActivated] = useState(false);
-      const [errorMsg, setErrorMsg] = useState("");
-      const [loading, setLoading] = useState(false);
-      const [showCelebration, setShowCelebration] = useState(false);
+        // Data States
+        const [systemSales, setSystemSales] = useState(0);
+        const [cashActual, setCashActual] = useState(0);
+        const [instapay, setInstapay] = useState(0);
+        const [expenses, setExpenses] = useState(0);
+        const [wastage, setWastage] = useState(0);
+        const [allowedWastage, setAllowedWastage] = useState(100);
+        const [ocrText, setOcrText] = useState('');
+        const [loadingOcr, setLoadingOcr] = useState(false);
 
-      // حالة إدخال الحسابات
-      const [salesInput, setSalesInput] = useState(0);
-      const [actualCash, setActualCash] = useState(0);
-      const [instapayAmount, setInstapayAmount] = useState(0);
-      const [expenses, setExpenses] = useState(0);
-      const [inputMode, setInputMode] = useState("manual");
+        const chartRef = useRef(null);
+        const chartInstance = useRef(null);
 
-      useEffect(() => {
-        const savedKey = localStorage.getItem("vault_app_license_key");
-        if (savedKey) {
-          setIsActivated(true);
+        // Calculate Deficit & Net Profit
+        const totalCollected = Number(cashActual) + Number(instapay);
+        const netCalculated = Number(systemSales) - Number(expenses) - Number(wastage);
+        const deficit = Number(systemSales) - totalCollected;
+        const isWastageExceeded = Number(wastage) > Number(allowedWastage);
+
+        // Chart Setup
+        useEffect(() => {
+            if (activeTab === 'reports' && chartRef.current) {
+                if (chartInstance.current) chartInstance.current.destroy();
+                const ctx = chartRef.current.getContext('2d');
+                chartInstance.current = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['الكاش الفعلي', 'InstaPay/فيزا', 'المصاريف والخدمات', 'العجز والفرق'],
+                        datasets: [{
+                            data: [cashActual, instapay, expenses, deficit > 0 ? deficit : 0],
+                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']
+                        }]
+                    },
+                    options: { plugins: { legend: { labels: { color: '#ffffff' } } } }
+                });
+            }
+        }, [activeTab, cashActual, instapay, expenses, deficit]);
+
+        // OCR Handler
+        const handleOcr = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            setLoadingOcr(true);
+            Tesseract.recognize(file, 'ara+eng').then(({ data: { text } }) => {
+                setOcrText(text);
+                setLoadingOcr(false);
+            });
+        };
+
+        if (!auth) {
+            return (
+                <div className="flex items-center justify-center min-h-screen px-4">
+                    <div className="luxury-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl border-2 border-amber-500/30">
+                        <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500">
+                            <i data-lucide="shield-check" className="w-10 h-10 text-emerald-400"></i>
+                        </div>
+                        <h1 className="text-3xl font-black gold-text mb-2">رقيب الخزنة الذكي</h1>
+                        <p className="text-sm text-slate-400 mb-6">منظومة كشف التسريب والعجز والربح المستقل V2026</p>
+                        <input 
+                            type="password" 
+                            placeholder="أدخل كود التفعيل الخص بالمنشأة"
+                            className="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-center mb-4 focus:border-emerald-500 outline-none text-white"
+                            value={passCode}
+                            onChange={(e) => setPassCode(e.target.value)}
+                        />
+                        <button 
+                            onClick={() => (passCode === '2026' || passCode === 'VAULT-PRO-2026') ? setAuth(true) : alert('كود تفعيل غير صحيح')}
+                            className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold rounded-lg shadow-lg hover:brightness-110 transition"
+                        >
+                            دخول النظام الفاخر 🔓
+                        </button>
+                    </div>
+                </div>
+            );
         }
-      }, []);
 
-      // التحقق من كود تفعيل أداة رقيب الخزنة
-      const handleActivate = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setErrorMsg("");
-
-        const cleanKey = licenseKey.trim().toUpperCase();
-
-        if (!cleanKey.startsWith("VAULT-")) {
-          setErrorMsg("كود التفعيل هذا لا يخص أداة رقيب الخزنة!");
-          setLoading(false);
-          return;
-        }
-
-        if (supabaseAnonKey) {
-          const { data, error } = await supabase
-            .from("licenses")
-            .select("*")
-            .eq("license_key", cleanKey)
-            .eq("is_active", true)
-            .single();
-
-          if (data && !error) {
-            localStorage.setItem("vault_app_license_key", cleanKey);
-            setIsActivated(true);
-          } else {
-            setErrorMsg("كود التفعيل غير صحيح أو غير مفعل!");
-          }
-        } else {
-          localStorage.setItem("vault_app_license_key", cleanKey);
-          setIsActivated(true);
-        }
-        setLoading(false);
-      };
-
-      const totalCollected = Number(actualCash) + Number(instapayAmount);
-      const deficitOrSurplus = totalCollected - Number(salesInput);
-      const netProfit = totalCollected - Number(expenses);
-
-      const triggerMoneyRain = () => {
-        setShowCelebration(true);
-        setTimeout(() => setShowCelebration(false), 3000);
-      };
-
-      // 🔒 شاشة الحماية والسيطرة
-      if (!isActivated) {
         return (
-          <div class="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4 dir-rtl" dir="rtl">
-            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 max-w-md w-full text-center shadow-2xl">
-              <div class="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                🛡️
-              </div>
-              <h2 class="text-2xl font-black mb-1 text-emerald-400">رقيب الخزنة</h2>
-              <p class="text-slate-400 text-xs mb-6">أدخل كود تفعيل أداة كشف العجز المالي للوصول</p>
+            <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+                {/* Header */}
+                <header className="flex flex-col md:flex-row justify-between items-center luxury-card p-6 rounded-2xl border-b-2 border-emerald-500 shadow-xl">
+                    <div className="flex items-center space-x-4 space-x-reverse mb-4 md:mb-0">
+                        <div className="p-3 bg-emerald-500/20 rounded-xl border border-emerald-500">
+                            <i data-lucide="vault" className="w-8 h-8 text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-black gold-text">رقيب الخزنة - Vault Pro</h1>
+                            <p className="text-xs text-slate-400">لوحة التحكم المالية الاحترافية للمحلات والمتاجر</p>
+                        </div>
+                    </div>
 
-              <form onSubmit={handleActivate} class="space-y-4">
-                <input
-                  type="text"
-                  value={licenseKey}
-                  onChange={(e) => setLicenseKey(e.target.value)}
-                  placeholder="أدخل الكود (مثال: VAULT-PRO-2026)"
-                  class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-center text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition"
-                />
-                {errorMsg && <p class="text-rose-400 text-xs">{errorMsg}</p>}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl transition duration-200 shadow-lg shadow-emerald-600/20"
-                >
-                  {loading ? "جاري التحقق..." : "تفعيل رقيب الخزنة 🔓"}
-                </button>
-              </form>
+                    {/* Navigation Tabs */}
+                    <div className="flex bg-slate-900 p-1.5 rounded-xl border border-slate-700">
+                        <button onClick={() => setActiveTab('input')} className={`px-4 py-2 rounded-lg text-sm transition ${activeTab === 'input' ? 'active-tab' : 'text-slate-300'}`}>📥 مدخل البيانات</button>
+                        <button onClick={() => setActiveTab('engines')} className={`px-4 py-2 rounded-lg text-sm transition ${activeTab === 'engines' ? 'active-tab' : 'text-slate-300'}`}>🧮 مركز الحاسبات</button>
+                        <button onClick={() => setActiveTab('reports')} className={`px-4 py-2 rounded-lg text-sm transition ${activeTab === 'reports' ? 'active-tab' : 'text-slate-300'}`}>📊 التقرير والمكسب</button>
+                    </div>
+                </header>
+
+                {/* Main Content Area */}
+                <main>
+                    {/* TAB 1: Multi-Input Hub */}
+                    {activeTab === 'input' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="luxury-card p-6 rounded-2xl space-y-4">
+                                <h3 className="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                                    <i data-lucide="scan"></i> ماسح التقارير والأوراق (AI Scanner)
+                                </h3>
+                                <p className="text-xs text-slate-400">ارفع صورة التقرير اليومي بخط اليد أو السيستم لاستخراج البيانات تلقائياً</p>
+                                <input type="file" onChange={handleOcr} className="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-300" />
+                                {loadingOcr && <p className="text-amber-400 text-xs animate-pulse">جاري تحليل الورقة بالذكاء الاصطناعي...</p>}
+                                {ocrText && (
+                                    <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-700 text-xs max-h-32 overflow-y-auto text-emerald-300">
+                                        <strong>النص المستخرج:</strong> {ocrText}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="luxury-card p-6 rounded-2xl space-y-4">
+                                <h3 className="text-lg font-bold text-blue-400 flex items-center gap-2">
+                                    <i data-lucide="file-spreadsheet"></i> مستورد الجداول (Excel/CSV)
+                                </h3>
+                                <p className="text-xs text-slate-400">رفع شيت كاشير المحل مباشرة لتغذية الخزنة بالأرقام</p>
+                                <div className="border-2 border-dashed border-slate-700 p-8 rounded-xl text-center hover:border-blue-500 transition cursor-pointer">
+                                    <i data-lucide="upload-cloud" className="w-10 h-10 text-slate-500 mx-auto mb-2"></i>
+                                    <span className="text-xs text-slate-400">اضغط لرفع ملف Excel أو CSV</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 2: Smart Calculations Engine */}
+                    {activeTab === 'engines' && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="luxury-card p-6 rounded-2xl space-y-4 md:col-span-2">
+                                <h3 className="text-lg font-bold gold-text flex items-center gap-2">
+                                    <i data-lucide="calculator"></i> مدخلات الخزنة والورديات
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs text-slate-400">إجمالي مبيعات السيستم/الدفتر</label>
+                                        <input type="number" value={systemSales} onChange={e => setSystemSales(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-slate-400">الكاش الفعلي في الخزنة</label>
+                                        <input type="number" value={cashActual} onChange={e => setCashActual(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-slate-400">مدفوعات الفيزا و InstaPay</label>
+                                        <input type="number" value={instapay} onChange={e => setInstapay(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-slate-400">المصاريف اليومية وأجور العمال</label>
+                                        <input type="number" value={expenses} onChange={e => setExpenses(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Wastage Margin Monitor */}
+                            <div className="luxury-card p-6 rounded-2xl space-y-4">
+                                <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2">
+                                    <i data-lucide="alert-triangle"></i> حاسبة الهالك والحد المسموح
+                                </h3>
+                                <div>
+                                    <label className="text-xs text-slate-400">قيمة الهالك اليومي (ج.م)</label>
+                                    <input type="number" value={wastage} onChange={e => setWastage(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-slate-400">الحد الأقصى المسموح للهالك</label>
+                                    <input type="number" value={allowedWastage} onChange={e => setAllowedWastage(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
+                                </div>
+
+                                {isWastageExceeded && (
+                                    <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-xs font-bold animate-bounce flex items-center gap-2">
+                                        <i data-lucide="bell-ring"></i> تحذير: الهالك تجاوز الحد المسموح!
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 3: Executive Reports */}
+                    {activeTab === 'reports' && (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="luxury-card p-6 rounded-2xl text-center border-t-4 border-red-500">
+                                    <span className="text-xs text-slate-400">حالة الخزنة والعجز</span>
+                                    <h2 className={`text-3xl font-black mt-2 ${deficit > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                                        {deficit > 0 ? `عجز: ${deficit} ج.م` : 'الخزنة مظبوطة 100%'}
+                                    </h2>
+                                </div>
+
+                                <div className="luxury-card p-6 rounded-2xl text-center border-t-4 border-emerald-500">
+                                    <span className="text-xs text-slate-400">صافي الأرباح الحقيقية</span>
+                                    <h2 className="text-3xl font-black text-emerald-400 mt-2">{netCalculated} ج.م</h2>
+                                </div>
+
+                                <div className="luxury-card p-6 rounded-2xl text-center border-t-4 border-blue-500">
+                                    <span className="text-xs text-slate-400">إجمالي المتحصلات الكلية</span>
+                                    <h2 className="text-3xl font-black text-blue-400 mt-2">{totalCollected} ج.م</h2>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="luxury-card p-6 rounded-2xl">
+                                    <h3 className="text-lg font-bold gold-text mb-4">تحليل تدفق الأموال والنظيف</h3>
+                                    <canvas ref={chartRef} className="max-h-64 mx-auto"></canvas>
+                                </div>
+
+                                <div className="luxury-card p-6 rounded-2xl flex flex-col justify-between">
+                                    <div>
+                                        <h3 className="text-lg font-bold text-emerald-400 mb-2">تصدير التقرير التنفيذي</h3>
+                                        <p className="text-xs text-slate-400 mb-6">يمكنك طباعة هذا التقرير أو إرساله بصيغة PDF مباشرة للشريك أو صاحب المنشأة.</p>
+                                    </div>
+                                    <button onClick={() => window.print()} className="w-full py-4 bg-amber-500 text-slate-950 font-black rounded-xl hover:bg-amber-400 transition flex items-center justify-center gap-2">
+                                        <i data-lucide="printer"></i> طباعة تقرير PDF المالي
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </main>
             </div>
-          </div>
         );
-      }
-
-      // 🛡️ الواجهة الرئيسية للأداة
-      return (
-        <div class="min-h-screen bg-slate-950 text-slate-100 p-4 dir-rtl relative overflow-hidden" dir="rtl">
-          
-          {/* 💸 تأثير الاحتفال بالأرباح */}
-          {showCelebration && (
-            <div class="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
-              <div class="text-6xl animate-bounce space-x-4">
-                💵 🥳 💰 🍾 💸 🚀
-              </div>
-            </div>
-          )}
-
-          <div class="max-w-4xl mx-auto space-y-6 py-6">
-            
-            <div class="text-center space-y-2">
-              <span class="text-5xl inline-block mb-2">🛡️</span>
-              <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-300">
-                رقيب الخزنة الذكي
-              </h1>
-              <p class="text-slate-400 text-xs">نظام كشف التسريب والعجز المالي وصافي الربح المستقل</p>
-            </div>
-
-            <div class="flex justify-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
-              <button
-                onClick={() => setInputMode("manual")}
-                class={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
-                  inputMode === "manual" ? "bg-emerald-500 text-slate-950" : "text-slate-400"
-                }`}
-              >
-                ✏️ إدخال يدوي
-              </button>
-              <button
-                onClick={() => setInputMode("ocr")}
-                class={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
-                  inputMode === "ocr" ? "bg-emerald-500 text-slate-950" : "text-slate-400"
-                }`}
-              >
-                📸 مسح تقرير/ورقة
-              </button>
-            </div>
-
-            {inputMode === "ocr" ? (
-              <div class="bg-slate-900/60 border border-dashed border-slate-800 p-8 rounded-3xl text-center space-y-3">
-                <div class="text-4xl">📄</div>
-                <p class="text-xs text-slate-400">اختر صورة الفاتورة أو التقرير لقراءته تلقائياً</p>
-                <input type="file" accept="image/*" class="text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-500/10 file:text-emerald-400" />
-              </div>
-            ) : (
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-2">إجمالي المبيعات (السيستم/الدفتر)</label>
-                  <input
-                    type="number"
-                    value={salesInput || ""}
-                    onChange={(e) => setSalesInput(Number(e.target.value))}
-                    placeholder="0"
-                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-2">الكاش الفعلي بالخزنة</label>
-                  <input
-                    type="number"
-                    value={actualCash || ""}
-                    onChange={(e) => setActualCash(Number(e.target.value))}
-                    placeholder="0"
-                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-2">Instapay / فيزا</label>
-                  <input
-                    type="number"
-                    value={instapayAmount || ""}
-                    onChange={(e) => setInstapayAmount(Number(e.target.value))}
-                    placeholder="0"
-                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-2">المصاريف والنثريات</label>
-                  <input
-                    type="number"
-                    value={expenses || ""}
-                    onChange={(e) => setExpenses(Number(e.target.value))}
-                    placeholder="0"
-                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class={`p-6 rounded-3xl border ${
-                deficitOrSurplus < 0 
-                  ? "bg-rose-950/30 border-rose-800/50 text-rose-200" 
-                  : "bg-emerald-950/30 border-emerald-800/50 text-emerald-200"
-              }`}>
-                <span class="text-xs font-bold block mb-2">حالة الخزنة والعجز</span>
-                <div class="text-3xl font-black mb-1">
-                  {Math.abs(deficitOrSurplus)} ج.م
-                </div>
-                <p class="text-xs opacity-75">
-                  {deficitOrSurplus < 0 
-                    ? `تنبيه: يوجد عجز مالي بمقدار ${Math.abs(deficitOrSurplus)} جنيه!` 
-                    : "الخزنة مظبوطة تماماً"}
-                </p>
-              </div>
-
-              <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-                <span class="text-xs font-bold text-slate-400 block mb-2">صافي الربح الحقيقي</span>
-                <div class="text-3xl font-black text-amber-400 mb-1">
-                  {netProfit} ج.م
-                </div>
-                {netProfit > 0 && (
-                  <button
-                    onClick={triggerMoneyRain}
-                    class="mt-3 text-xs bg-amber-500/10 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-xl hover:bg-amber-500/20 transition"
-                  >
-                    🎉 احتفل بالربح
-                  </button>
-                )}
-              </div>
-            </div>
-
-          </div>
-        </div>
-      );
     }
 
-    ReactDOM.render(<VaultApp />, document.getElementById('root'));
-  </script>
+    ReactDOM.render(<App />, document.getElementById('root'));
+    setTimeout(() => lucide.createIcons(), 500);
+</script>
+
 </body>
 </html>
