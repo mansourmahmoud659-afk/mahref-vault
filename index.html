@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رقيب الخزنة الذكي - المنصة المستقلة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: 'Tajawal', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // 🔗 ربط السوبابيز
+    const supabaseUrl = "https://ysmqmhhkbmkhaenkplmw.supabase.co";
+    const supabaseAnonKey = ""; // سيبها فاضية مؤقتاً
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey || "dummy-key");
+
+    function VaultApp() {
+      // حالة الحماية والتفعيل
+      const [licenseKey, setLicenseKey] = useState("");
+      const [isActivated, setIsActivated] = useState(false);
+      const [errorMsg, setErrorMsg] = useState("");
+      const [loading, setLoading] = useState(false);
+      const [showCelebration, setShowCelebration] = useState(false);
+
+      // حالة إدخال الحسابات
+      const [salesInput, setSalesInput] = useState(0);
+      const [actualCash, setActualCash] = useState(0);
+      const [instapayAmount, setInstapayAmount] = useState(0);
+      const [expenses, setExpenses] = useState(0);
+      const [inputMode, setInputMode] = useState("manual");
+
+      useEffect(() => {
+        const savedKey = localStorage.getItem("vault_app_license_key");
+        if (savedKey) {
+          setIsActivated(true);
+        }
+      }, []);
+
+      // التحقق من كود تفعيل أداة رقيب الخزنة
+      const handleActivate = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setErrorMsg("");
+
+        const cleanKey = licenseKey.trim().toUpperCase();
+
+        if (!cleanKey.startsWith("VAULT-")) {
+          setErrorMsg("كود التفعيل هذا لا يخص أداة رقيب الخزنة!");
+          setLoading(false);
+          return;
+        }
+
+        if (supabaseAnonKey) {
+          const { data, error } = await supabase
+            .from("licenses")
+            .select("*")
+            .eq("license_key", cleanKey)
+            .eq("is_active", true)
+            .single();
+
+          if (data && !error) {
+            localStorage.setItem("vault_app_license_key", cleanKey);
+            setIsActivated(true);
+          } else {
+            setErrorMsg("كود التفعيل غير صحيح أو غير مفعل!");
+          }
+        } else {
+          localStorage.setItem("vault_app_license_key", cleanKey);
+          setIsActivated(true);
+        }
+        setLoading(false);
+      };
+
+      const totalCollected = Number(actualCash) + Number(instapayAmount);
+      const deficitOrSurplus = totalCollected - Number(salesInput);
+      const netProfit = totalCollected - Number(expenses);
+
+      const triggerMoneyRain = () => {
+        setShowCelebration(true);
+        setTimeout(() => setShowCelebration(false), 3000);
+      };
+
+      // 🔒 شاشة الحماية والسيطرة
+      if (!isActivated) {
+        return (
+          <div class="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4 dir-rtl" dir="rtl">
+            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 max-w-md w-full text-center shadow-2xl">
+              <div class="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                🛡️
+              </div>
+              <h2 class="text-2xl font-black mb-1 text-emerald-400">رقيب الخزنة</h2>
+              <p class="text-slate-400 text-xs mb-6">أدخل كود تفعيل أداة كشف العجز المالي للوصول</p>
+
+              <form onSubmit={handleActivate} class="space-y-4">
+                <input
+                  type="text"
+                  value={licenseKey}
+                  onChange={(e) => setLicenseKey(e.target.value)}
+                  placeholder="أدخل الكود (مثال: VAULT-PRO-2026)"
+                  class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-center text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition"
+                />
+                {errorMsg && <p class="text-rose-400 text-xs">{errorMsg}</p>}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl transition duration-200 shadow-lg shadow-emerald-600/20"
+                >
+                  {loading ? "جاري التحقق..." : "تفعيل رقيب الخزنة 🔓"}
+                </button>
+              </form>
+            </div>
+          </div>
+        );
+      }
+
+      // 🛡️ الواجهة الرئيسية للأداة
+      return (
+        <div class="min-h-screen bg-slate-950 text-slate-100 p-4 dir-rtl relative overflow-hidden" dir="rtl">
+          
+          {/* 💸 تأثير الاحتفال بالأرباح */}
+          {showCelebration && (
+            <div class="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
+              <div class="text-6xl animate-bounce space-x-4">
+                💵 🥳 💰 🍾 💸 🚀
+              </div>
+            </div>
+          )}
+
+          <div class="max-w-4xl mx-auto space-y-6 py-6">
+            
+            <div class="text-center space-y-2">
+              <span class="text-5xl inline-block mb-2">🛡️</span>
+              <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-300">
+                رقيب الخزنة الذكي
+              </h1>
+              <p class="text-slate-400 text-xs">نظام كشف التسريب والعجز المالي وصافي الربح المستقل</p>
+            </div>
+
+            <div class="flex justify-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+              <button
+                onClick={() => setInputMode("manual")}
+                class={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
+                  inputMode === "manual" ? "bg-emerald-500 text-slate-950" : "text-slate-400"
+                }`}
+              >
+                ✏️ إدخال يدوي
+              </button>
+              <button
+                onClick={() => setInputMode("ocr")}
+                class={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
+                  inputMode === "ocr" ? "bg-emerald-500 text-slate-950" : "text-slate-400"
+                }`}
+              >
+                📸 مسح تقرير/ورقة
+              </button>
+            </div>
+
+            {inputMode === "ocr" ? (
+              <div class="bg-slate-900/60 border border-dashed border-slate-800 p-8 rounded-3xl text-center space-y-3">
+                <div class="text-4xl">📄</div>
+                <p class="text-xs text-slate-400">اختر صورة الفاتورة أو التقرير لقراءته تلقائياً</p>
+                <input type="file" accept="image/*" class="text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-500/10 file:text-emerald-400" />
+              </div>
+            ) : (
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-2">إجمالي المبيعات (السيستم/الدفتر)</label>
+                  <input
+                    type="number"
+                    value={salesInput || ""}
+                    onChange={(e) => setSalesInput(Number(e.target.value))}
+                    placeholder="0"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-2">الكاش الفعلي بالخزنة</label>
+                  <input
+                    type="number"
+                    value={actualCash || ""}
+                    onChange={(e) => setActualCash(Number(e.target.value))}
+                    placeholder="0"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-2">Instapay / فيزا</label>
+                  <input
+                    type="number"
+                    value={instapayAmount || ""}
+                    onChange={(e) => setInstapayAmount(Number(e.target.value))}
+                    placeholder="0"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-2">المصاريف والنثريات</label>
+                  <input
+                    type="number"
+                    value={expenses || ""}
+                    onChange={(e) => setExpenses(Number(e.target.value))}
+                    placeholder="0"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-emerald-500 outline-none text-center"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class={`p-6 rounded-3xl border ${
+                deficitOrSurplus < 0 
+                  ? "bg-rose-950/30 border-rose-800/50 text-rose-200" 
+                  : "bg-emerald-950/30 border-emerald-800/50 text-emerald-200"
+              }`}>
+                <span class="text-xs font-bold block mb-2">حالة الخزنة والعجز</span>
+                <div class="text-3xl font-black mb-1">
+                  {Math.abs(deficitOrSurplus)} ج.م
+                </div>
+                <p class="text-xs opacity-75">
+                  {deficitOrSurplus < 0 
+                    ? `تنبيه: يوجد عجز مالي بمقدار ${Math.abs(deficitOrSurplus)} جنيه!` 
+                    : "الخزنة مظبوطة تماماً"}
+                </p>
+              </div>
+
+              <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
+                <span class="text-xs font-bold text-slate-400 block mb-2">صافي الربح الحقيقي</span>
+                <div class="text-3xl font-black text-amber-400 mb-1">
+                  {netProfit} ج.م
+                </div>
+                {netProfit > 0 && (
+                  <button
+                    onClick={triggerMoneyRain}
+                    class="mt-3 text-xs bg-amber-500/10 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-xl hover:bg-amber-500/20 transition"
+                  >
+                    🎉 احتفل بالربح
+                  </button>
+                )}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<VaultApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>
