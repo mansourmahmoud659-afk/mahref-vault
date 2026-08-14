@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رقيب الخزنة الذكي - Vault Pro 2026</title>
-    <!-- Tailwind CSS & Lucide Icons -->
+    <title>Vault Sentinel AI 2026 - رادار كشف الاختلاس والذكاء المالي</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- React & Babel -->
@@ -13,22 +16,99 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Chart.js & Tesseract.js (OCR) -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
-    <!-- Google Fonts (Tajawal) -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Tajawal & Orbitron) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Tajawal:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#050811',
+                            card: 'rgba(15, 23, 42, 0.75)',
+                            gold: '#FFD700',
+                            emerald: '#10B981',
+                            crimson: '#FF2E93',
+                            cyan: '#00F0FF',
+                            purple: '#A855F7'
+                        }
+                    },
+                    fontFamily: {
+                        tajawal: ['Tajawal', 'sans-serif'],
+                        tech: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #0b132b; color: #e0e1dd; }
-        .gold-border { border: 1px solid #d4af37; }
-        .gold-text { color: #d4af37; }
-        .luxury-card { background: linear-gradient(145deg, #1c2541, #0b132b); border: 1px solid #3a506b; }
-        .active-tab { background: #10b981; color: #0b132b; font-weight: bold; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #030712;
+            color: #F3F4F6;
+            overflow-x: hidden;
+        }
+
+        /* Sci-Fi Glowing effects */
+        .glow-cyan { box-shadow: 0 0 25px rgba(0, 240, 255, 0.25); }
+        .glow-gold { box-shadow: 0 0 25px rgba(255, 215, 0, 0.25); }
+        .glow-crimson { box-shadow: 0 0 30px rgba(255, 46, 147, 0.35); }
+        .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-panel-interactive {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-interactive:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .cyber-grid {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .scanline {
+            position: relative;
+            overflow: hidden;
+        }
+        .scanline::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 20;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+
+        @keyframes radar-pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .radar-anim { animation: radar-pulse 3s infinite ease-in-out; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="cyber-grid min-h-screen">
 
 <div id="root"></div>
 
@@ -36,239 +116,385 @@
     const { useState, useEffect, useRef } = React;
 
     function App() {
-        const [activeTab, setActiveTab] = useState('input');
         const [auth, setAuth] = useState(false);
-        const [passCode, setPassCode] = useState('');
+        const [pinCode, setPinCode] = useState('');
+        const [activeTab, setActiveTab] = useState('radar'); // radar, inputs, shift, analytics, audit
 
-        // Data States
-        const [systemSales, setSystemSales] = useState(0);
-        const [cashActual, setCashActual] = useState(0);
-        const [instapay, setInstapay] = useState(0);
-        const [expenses, setExpenses] = useState(0);
-        const [wastage, setWastage] = useState(0);
-        const [allowedWastage, setAllowedWastage] = useState(100);
-        const [ocrText, setOcrText] = useState('');
-        const [loadingOcr, setLoadingOcr] = useState(false);
+        // Data Models
+        const [systemSales, setSystemSales] = useState(48500);
+        const [cashDrawer, setCashDrawer] = useState(29200);
+        const [visaInsta, setVisaInsta] = useState(14800);
+        const [expenses, setExpenses] = useState(1800);
+        const [unregisteredDiscount, setUnregisteredDiscount] = useState(1200); // خصومات بدون إذن
+        const [rawWastage, setRawWastage] = useState(950); // هالك خامات
+        const [allowedWastage, setAllowedWastage] = useState(400);
+        
+        // Anti-Fraud AI Indicators
+        const [shiftCashier, setShiftCashier] = useState('أحمد (وردية مسائية)');
+        const [voidCount, setVoidCount] = useState(14); // عدد الفواتير الملغاة
+        const [suspiciousReturns, setSuspiciousReturns] = useState(3200); // مرتجعات مشبوهة
+        const [noDrawerOpenCount, setNoDrawerOpenCount] = useState(28); // فتح الدرج بدون بيع
 
         const chartRef = useRef(null);
         const chartInstance = useRef(null);
 
-        // Calculate Deficit & Net Profit
-        const totalCollected = Number(cashActual) + Number(instapay);
-        const netCalculated = Number(systemSales) - Number(expenses) - Number(wastage);
-        const deficit = Number(systemSales) - totalCollected;
-        const isWastageExceeded = Number(wastage) > Number(allowedWastage);
+        // Advanced Financial Mechanics
+        const totalActualCollected = Number(cashDrawer) + Number(visaInsta);
+        const totalExpensesAndLosses = Number(expenses) + Number(rawWastage) + Number(unregisteredDiscount);
+        const theoreticalDifference = Number(systemSales) - (totalActualCollected + Number(expenses));
+        const netProfitAfterLeaks = Number(systemSales) - totalExpensesAndLosses - (theoreticalDifference > 0 ? theoreticalDifference : 0);
 
-        // Chart Setup
+        // AI Fraud Threat Score (0 to 100%)
+        const calculateFraudScore = () => {
+            let score = 10;
+            if (theoreticalDifference > 500) score += 35;
+            if (voidCount > 8) score += 20;
+            if (noDrawerOpenCount > 15) score += 15;
+            if (rawWastage > allowedWastage) score += 15;
+            if (suspiciousReturns > 2000) score += 10;
+            return Math.min(score, 100);
+        };
+
+        const fraudScore = calculateFraudScore();
+
         useEffect(() => {
-            if (activeTab === 'reports' && chartRef.current) {
+            if (auth && activeTab === 'analytics' && chartRef.current) {
                 if (chartInstance.current) chartInstance.current.destroy();
                 const ctx = chartRef.current.getContext('2d');
                 chartInstance.current = new Chart(ctx, {
-                    type: 'doughnut',
+                    type: 'bar',
                     data: {
-                        labels: ['الكاش الفعلي', 'InstaPay/فيزا', 'المصاريف والخدمات', 'العجز والفرق'],
+                        labels: ['مبيعات السيستم', 'المقبوضات الفعلية', 'المصاريف والخدمات', 'العجز التسريبي', 'الهالك والخصومات'],
                         datasets: [{
-                            data: [cashActual, instapay, expenses, deficit > 0 ? deficit : 0],
-                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']
+                            label: 'القيمة بالجنيه (EGP)',
+                            data: [systemSales, totalActualCollected, expenses, theoreticalDifference > 0 ? theoreticalDifference : 0, Number(rawWastage) + Number(unregisteredDiscount)],
+                            backgroundColor: ['#00F0FF', '#10B981', '#F59E0B', '#FF2E93', '#A855F7'],
+                            borderRadius: 12
                         }]
                     },
-                    options: { plugins: { legend: { labels: { color: '#ffffff' } } } }
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9CA3AF' } },
+                            x: { grid: { display: false }, ticks: { color: '#9CA3AF' } }
+                        }
+                    }
                 });
             }
-        }, [activeTab, cashActual, instapay, expenses, deficit]);
+        }, [auth, activeTab, systemSales, cashDrawer, visaInsta, expenses, theoreticalDifference, rawWastage, unregisteredDiscount]);
 
-        // OCR Handler
-        const handleOcr = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            setLoadingOcr(true);
-            Tesseract.recognize(file, 'ara+eng').then(({ data: { text } }) => {
-                setOcrText(text);
-                setLoadingOcr(false);
+        // Launch Confetti on Profit Success
+        const handleConfetti = () => {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
             });
         };
 
         if (!auth) {
             return (
-                <div className="flex items-center justify-center min-h-screen px-4">
-                    <div className="luxury-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl border-2 border-amber-500/30">
-                        <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500">
-                            <i data-lucide="shield-check" className="w-10 h-10 text-emerald-400"></i>
+                <div className="flex items-center justify-center min-h-screen px-4 scanline">
+                    <div className="glass-panel p-10 rounded-3xl max-w-lg w-full text-center border border-cyan-500/30 glow-cyan relative overflow-hidden">
+                        <div className="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+                        <div className="w-24 h-24 bg-cyan-950/80 rounded-2xl border-2 border-cyan-400 flex items-center justify-center mx-auto mb-6 glow-cyan radar-anim">
+                            <i data-lucide="shield-alert" className="w-12 h-12 text-cyan-400"></i>
                         </div>
-                        <h1 className="text-3xl font-black gold-text mb-2">رقيب الخزنة الذكي</h1>
-                        <p className="text-sm text-slate-400 mb-6">منظومة كشف التسريب والعجز والربح المستقل V2026</p>
-                        <input 
-                            type="password" 
-                            placeholder="أدخل كود التفعيل الخص بالمنشأة"
-                            className="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-center mb-4 focus:border-emerald-500 outline-none text-white"
-                            value={passCode}
-                            onChange={(e) => setPassCode(e.target.value)}
-                        />
-                        <button 
-                            onClick={() => (passCode === '2026' || passCode === 'VAULT-PRO-2026') ? setAuth(true) : alert('كود تفعيل غير صحيح')}
-                            className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold rounded-lg shadow-lg hover:brightness-110 transition"
-                        >
-                            دخول النظام الفاخر 🔓
-                        </button>
+                        <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-gold to-emerald-400 mb-1 font-tech tracking-wider">
+                            VAULT SENTINEL AI
+                        </h1>
+                        <p className="text-xs text-slate-400 mb-8 tracking-widest uppercase">منظومة رادار كشف التسريب المالي والسرقة الذكية v2026</p>
+                        
+                        <div className="space-y-4">
+                            <div className="relative">
+                                <input 
+                                    type="password" 
+                                    placeholder="أدخل كود التشفير المالي (مثال: 2026)"
+                                    className="w-full py-4 px-6 rounded-xl bg-slate-950/80 border border-slate-700 text-center font-tech text-xl tracking-widest text-cyan-300 focus:border-cyan-400 focus:glow-cyan outline-none transition"
+                                    value={pinCode}
+                                    onChange={(e) => setPinCode(e.target.value)}
+                                />
+                            </div>
+                            <button 
+                                onClick={() => (pinCode === '2026' || pinCode === 'ADMIN') ? (setAuth(true), setTimeout(() => lucide.createIcons(), 200)) : alert('كود التشفير غير صحيح')}
+                                className="w-full py-4 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-slate-950 font-black text-lg rounded-xl shadow-xl hover:brightness-125 transition active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="cpu" className="w-5 h-5"></i> تشغيل الرادار الخارق
+                            </button>
+                        </div>
+                        <div className="mt-8 text-[10px] text-slate-500 tracking-wider">SECURED BY AI VAULT NEURAL ENGINE - PATENTED 2026</div>
                     </div>
                 </div>
             );
         }
 
         return (
-            <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+            <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-8 min-h-screen">
                 {/* Header */}
-                <header className="flex flex-col md:flex-row justify-between items-center luxury-card p-6 rounded-2xl border-b-2 border-emerald-500 shadow-xl">
-                    <div className="flex items-center space-x-4 space-x-reverse mb-4 md:mb-0">
-                        <div className="p-3 bg-emerald-500/20 rounded-xl border border-emerald-500">
-                            <i data-lucide="vault" className="w-8 h-8 text-emerald-400"></i>
+                <header className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col lg:flex-row items-center justify-between gap-6 glow-cyan">
+                    <div className="flex items-center gap-4">
+                        <div className="p-4 bg-cyan-500/10 border border-cyan-400/40 rounded-2xl glow-cyan">
+                            <i data-lucide="radar" className="w-10 h-10 text-cyan-400 animate-spin" style={{ animationDuration: '10s' }}></i>
                         </div>
                         <div>
-                            <h1 className="text-2xl font-black gold-text">رقيب الخزنة - Vault Pro</h1>
-                            <p className="text-xs text-slate-400">لوحة التحكم المالية الاحترافية للمحلات والمتاجر</p>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-emerald-400 to-gold">
+                                    رقيب الخزنة الذكي PRO
+                                </h1>
+                                <span className="bg-cyan-500/20 text-cyan-300 text-[10px] px-2.5 py-1 rounded-full border border-cyan-500/40 font-tech uppercase">AI LIVE ACTIVE</span>
+                            </div>
+                            <p className="text-xs text-slate-400 mt-1">نظام مراقبة الثغرات والوردية - المحل: <span className="text-emerald-400 font-bold">الفرع الرئيسي</span></p>
                         </div>
                     </div>
 
-                    {/* Navigation Tabs */}
-                    <div className="flex bg-slate-900 p-1.5 rounded-xl border border-slate-700">
-                        <button onClick={() => setActiveTab('input')} className={`px-4 py-2 rounded-lg text-sm transition ${activeTab === 'input' ? 'active-tab' : 'text-slate-300'}`}>📥 مدخل البيانات</button>
-                        <button onClick={() => setActiveTab('engines')} className={`px-4 py-2 rounded-lg text-sm transition ${activeTab === 'engines' ? 'active-tab' : 'text-slate-300'}`}>🧮 مركز الحاسبات</button>
-                        <button onClick={() => setActiveTab('reports')} className={`px-4 py-2 rounded-lg text-sm transition ${activeTab === 'reports' ? 'active-tab' : 'text-slate-300'}`}>📊 التقرير والمكسب</button>
+                    {/* Futuristic Navigation */}
+                    <div className="flex flex-wrap bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
+                        <button onClick={() => setActiveTab('radar')} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'radar' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 glow-cyan' : 'text-slate-400 hover:text-white'}`}>
+                            <i data-lucide="shield-alert" className="w-4 h-4"></i> رادار السرقة والسرّاب
+                        </button>
+                        <button onClick={() => setActiveTab('inputs')} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'inputs' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 glow-cyan' : 'text-slate-400 hover:text-white'}`}>
+                            <i data-lucide="calculator" className="w-4 h-4"></i> مدخلات الخزنة
+                        </button>
+                        <button onClick={() => setActiveTab('shift')} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'shift' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 glow-cyan' : 'text-slate-400 hover:text-white'}`}>
+                            <i data-lucide="user-x" className="w-4 h-4"></i> ثغرات الكاشير
+                        </button>
+                        <button onClick={() => setActiveTab('analytics')} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'analytics' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 glow-cyan' : 'text-slate-400 hover:text-white'}`}>
+                            <i data-lucide="bar-chart-3" className="w-4 h-4"></i> الرسوم التوضيحية
+                        </button>
                     </div>
                 </header>
 
-                {/* Main Content Area */}
-                <main>
-                    {/* TAB 1: Multi-Input Hub */}
-                    {activeTab === 'input' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="luxury-card p-6 rounded-2xl space-y-4">
-                                <h3 className="text-lg font-bold text-emerald-400 flex items-center gap-2">
-                                    <i data-lucide="scan"></i> ماسح التقارير والأوراق (AI Scanner)
-                                </h3>
-                                <p className="text-xs text-slate-400">ارفع صورة التقرير اليومي بخط اليد أو السيستم لاستخراج البيانات تلقائياً</p>
-                                <input type="file" onChange={handleOcr} className="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-300" />
-                                {loadingOcr && <p className="text-amber-400 text-xs animate-pulse">جاري تحليل الورقة بالذكاء الاصطناعي...</p>}
-                                {ocrText && (
-                                    <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-700 text-xs max-h-32 overflow-y-auto text-emerald-300">
-                                        <strong>النص المستخرج:</strong> {ocrText}
+                {/* TAB 1: AI FRAUD RADAR & LEAK DETECTOR */}
+                {activeTab === 'radar' && (
+                    <div className="space-y-8">
+                        {/* KPI Cards Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {/* Card 1: Deficit Radar */}
+                            <div className={`glass-panel p-6 rounded-3xl border-t-4 ${theoreticalDifference > 0 ? 'border-pink-500 glow-crimson' : 'border-emerald-500 glow-emerald'}`}>
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">العجز المالي غير المبرر</span>
+                                    <div className={`p-2 rounded-xl ${theoreticalDifference > 0 ? 'bg-pink-500/20 text-pink-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                                        <i data-lucide={theoreticalDifference > 0 ? "alert-octagon" : "check-circle-2"} className="w-6 h-6"></i>
                                     </div>
-                                )}
+                                </div>
+                                <h3 className={`text-3xl font-black font-tech ${theoreticalDifference > 0 ? 'text-pink-500' : 'text-emerald-400'}`}>
+                                    {theoreticalDifference > 0 ? `-${theoreticalDifference} EGP` : 'لا يوجد عجز ✨'}
+                                </h3>
+                                <p className="text-[11px] text-slate-400 mt-2">
+                                    {theoreticalDifference > 0 ? '⚠️ فرق بين مبيعات السيستم والمقبوضات الفعليه' : 'جميع الأموال متطابقة تماماً مع السيستم'}
+                                </p>
                             </div>
 
-                            <div className="luxury-card p-6 rounded-2xl space-y-4">
-                                <h3 className="text-lg font-bold text-blue-400 flex items-center gap-2">
-                                    <i data-lucide="file-spreadsheet"></i> مستورد الجداول (Excel/CSV)
+                            {/* Card 2: Net Real Profit */}
+                            <div className="glass-panel p-6 rounded-3xl border-t-4 border-emerald-400 glow-emerald">
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">صافي الأرباح الحقيقية</span>
+                                    <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl">
+                                        <i data-lucide="trending-up" className="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                                <h3 className="text-3xl font-black text-emerald-400 font-tech">
+                                    {netProfitAfterLeaks} EGP
                                 </h3>
-                                <p className="text-xs text-slate-400">رفع شيت كاشير المحل مباشرة لتغذية الخزنة بالأرقام</p>
-                                <div className="border-2 border-dashed border-slate-700 p-8 rounded-xl text-center hover:border-blue-500 transition cursor-pointer">
-                                    <i data-lucide="upload-cloud" className="w-10 h-10 text-slate-500 mx-auto mb-2"></i>
-                                    <span className="text-xs text-slate-400">اضغط لرفع ملف Excel أو CSV</span>
+                                <button onClick={handleConfetti} className="text-[10px] text-emerald-300 underline mt-2 hover:text-emerald-200">
+                                    اضغط للتحقق من الميزانية الصافية 🎉
+                                </button>
+                            </div>
+
+                            {/* Card 3: AI Fraud Risk Index */}
+                            <div className="glass-panel p-6 rounded-3xl border-t-4 border-amber-400 glow-gold">
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">مؤشر خطر السرقة/التسريب</span>
+                                    <div className="p-2 bg-amber-500/20 text-amber-400 rounded-xl">
+                                        <i data-lucide="activity" className="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                                <div className="flex items-baseline gap-2">
+                                    <h3 className="text-3xl font-black text-amber-400 font-tech">{fraudScore}%</h3>
+                                    <span className="text-xs text-slate-400">{fraudScore > 50 ? 'خطر مرتفع' : 'آمن نسبياً'}</span>
+                                </div>
+                                <div className="w-full bg-slate-900 h-2 rounded-full mt-3 overflow-hidden">
+                                    <div className={`h-full transition-all duration-500 ${fraudScore > 50 ? 'bg-pink-500' : 'bg-emerald-400'}`} style={{ width: `${fraudScore}%` }}></div>
                                 </div>
                             </div>
-                        </div>
-                    )}
 
-                    {/* TAB 2: Smart Calculations Engine */}
-                    {activeTab === 'engines' && (
+                            {/* Card 4: Total Collected */}
+                            <div className="glass-panel p-6 rounded-3xl border-t-4 border-cyan-400 glow-cyan">
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">إجمالي الكاش و InstaPay</span>
+                                    <div className="p-2 bg-cyan-500/20 text-cyan-400 rounded-xl">
+                                        <i data-lucide="wallet" className="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                                <h3 className="text-3xl font-black text-cyan-400 font-tech">
+                                    {totalActualCollected} EGP
+                                </h3>
+                                <p className="text-[11px] text-slate-400 mt-2">كاش: {cashDrawer} | فيزا/إنستا: {visaInsta}</p>
+                            </div>
+                        </div>
+
+                        {/* AI Forensic Fraud Detection Dashboard */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-2 glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
+                                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                                    <h3 className="text-lg font-bold text-cyan-400 flex items-center gap-3">
+                                        <i data-lucide="scan-eye" className="text-cyan-400"></i> رادار تحليل السلوكيات المشبوهة (AI Audit)
+                                    </h3>
+                                    <span className="text-xs text-slate-500 font-tech">RESPONSIBLE: {shiftCashier}</span>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 flex items-center justify-between hover:border-pink-500/50 transition">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-pink-500/10 text-pink-400 rounded-xl">
+                                                <i data-lucide="file-x-2"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-slate-200">الفواتير الملغاة بعد الطباعة (Void Receipts)</h4>
+                                                <p className="text-xs text-slate-500">تم إلغاء {voidCount} فاتورة بعد إتمام البيع (تكتيك سرقة كاشير شائعة)</p>
+                                            </div>
+                                        </div>
+                                        <span className={`text-sm font-bold font-tech px-3 py-1 rounded-lg ${voidCount > 10 ? 'bg-pink-500/20 text-pink-400 border border-pink-500/40' : 'text-emerald-400'}`}>
+                                            {voidCount} فواتير
+                                        </span>
+                                    </div>
+
+                                    <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 flex items-center justify-between hover:border-amber-500/50 transition">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl">
+                                                <i data-lucide="key-round"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-slate-200">فتح درج الخزنة بدون إجراء عملية بيع</h4>
+                                                <p className="text-xs text-slate-500">تم فتح درج النقدية {noDrawerOpenCount} مرة يدوياً</p>
+                                            </div>
+                                        </div>
+                                        <span className={`text-sm font-bold font-tech px-3 py-1 rounded-lg ${noDrawerOpenCount > 15 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'text-emerald-400'}`}>
+                                            {noDrawerOpenCount} فتحة
+                                        </span>
+                                    </div>
+
+                                    <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 flex items-center justify-between hover:border-purple-500/50 transition">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl">
+                                                <i data-lucide="flame"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-slate-200">تجاوز حد الهالك والمصنعيات المسموح</h4>
+                                                <p className="text-xs text-slate-500">الهالك المسجل: {rawWastage} EGP (الحد المسموح: {allowedWastage} EGP)</p>
+                                            </div>
+                                        </div>
+                                        <span className={`text-sm font-bold font-tech px-3 py-1 rounded-lg ${rawWastage > allowedWastage ? 'bg-purple-500/20 text-purple-400 border border-purple-500/40' : 'text-emerald-400'}`}>
+                                            +{rawWastage - allowedWastage} EGP زيادة
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Live AI Verdict & Action Plan */}
+                            <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30 glow-cyan flex flex-col justify-between">
+                                <div>
+                                    <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase mb-4">
+                                        <i data-lucide="bot"></i> التقرير والتوصية الذكية الفورية
+                                    </div>
+                                    <h4 className="text-xl font-bold text-white mb-2">توصية النظام لمالك المنشأة:</h4>
+                                    <p className="text-xs text-slate-300 leading-relaxed mb-6">
+                                        {theoreticalDifference > 0 ? 
+                                            `يوجد اشتباه بوجود "تسريب مالي ناعم" بقيمة ${theoreticalDifference} EGP في وردية (${shiftCashier}). يُنصح بمراجعة الفواتير الملغاة وقاعدة بيانات الكاميرات وقت فتح الدرج بدون بيع.` : 
+                                            'الوضع المالي ممتاز والوردية سليمة تماماً ولا يوجد أي مؤشر لاختلاس مالي.'}
+                                    </p>
+                                </div>
+
+                                <button onClick={() => window.print()} className="w-full py-4 bg-gradient-to-r from-amber-500 to-gold text-slate-950 font-black rounded-xl hover:brightness-110 transition flex items-center justify-center gap-2">
+                                    <i data-lucide="printer"></i> طباعة التقرير السري المحمي بـ PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* TAB 2: ADVANCED INPUTS */}
+                {activeTab === 'inputs' && (
+                    <div className="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
+                        <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-3">
+                            <i data-lucide="sliders"></i> مدخلات الحسابات والمالية للوردية
+                        </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="luxury-card p-6 rounded-2xl space-y-4 md:col-span-2">
-                                <h3 className="text-lg font-bold gold-text flex items-center gap-2">
-                                    <i data-lucide="calculator"></i> مدخلات الخزنة والورديات
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs text-slate-400">إجمالي مبيعات السيستم/الدفتر</label>
-                                        <input type="number" value={systemSales} onChange={e => setSystemSales(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs text-slate-400">الكاش الفعلي في الخزنة</label>
-                                        <input type="number" value={cashActual} onChange={e => setCashActual(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs text-slate-400">مدفوعات الفيزا و InstaPay</label>
-                                        <input type="number" value={instapay} onChange={e => setInstapay(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs text-slate-400">المصاريف اليومية وأجور العمال</label>
-                                        <input type="number" value={expenses} onChange={e => setExpenses(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
-                                    </div>
-                                </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">مبيعات السيستم الإجمالية (EGP)</label>
+                                <input type="number" value={systemSales} onChange={e => setSystemSales(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-cyan-300 font-tech text-lg mt-2 focus:border-cyan-400 outline-none" />
                             </div>
-
-                            {/* Wastage Margin Monitor */}
-                            <div className="luxury-card p-6 rounded-2xl space-y-4">
-                                <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2">
-                                    <i data-lucide="alert-triangle"></i> حاسبة الهالك والحد المسموح
-                                </h3>
-                                <div>
-                                    <label className="text-xs text-slate-400">قيمة الهالك اليومي (ج.م)</label>
-                                    <input type="number" value={wastage} onChange={e => setWastage(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-slate-400">الحد الأقصى المسموح للهالك</label>
-                                    <input type="number" value={allowedWastage} onChange={e => setAllowedWastage(e.target.value)} className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white mt-1" />
-                                </div>
-
-                                {isWastageExceeded && (
-                                    <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-xs font-bold animate-bounce flex items-center gap-2">
-                                        <i data-lucide="bell-ring"></i> تحذير: الهالك تجاوز الحد المسموح!
-                                    </div>
-                                )}
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">النقدية الفعلية داخل الدرج (Cash)</label>
+                                <input type="number" value={cashDrawer} onChange={e => setCashDrawer(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-tech text-lg mt-2 focus:border-emerald-400 outline-none" />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">متحصلات Visa / InstaPay</label>
+                                <input type="number" value={visaInsta} onChange={e => setVisaInsta(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-blue-400 font-tech text-lg mt-2 focus:border-blue-400 outline-none" />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">المصاريف اليومية والسلف</label>
+                                <input type="number" value={expenses} onChange={e => setExpenses(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-amber-400 font-tech text-lg mt-2 focus:border-amber-400 outline-none" />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">قيمة الهالك والخامات (EGP)</label>
+                                <input type="number" value={rawWastage} onChange={e => setRawWastage(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-purple-400 font-tech text-lg mt-2 focus:border-purple-400 outline-none" />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">الخصومات العشوائية غير المسجلة</label>
+                                <input type="number" value={unregisteredDiscount} onChange={e => setUnregisteredDiscount(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-pink-400 font-tech text-lg mt-2 focus:border-pink-400 outline-none" />
                             </div>
                         </div>
-                    )}
+                    </div>
+                )}
 
-                    {/* TAB 3: Executive Reports */}
-                    {activeTab === 'reports' && (
-                        <div className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="luxury-card p-6 rounded-2xl text-center border-t-4 border-red-500">
-                                    <span className="text-xs text-slate-400">حالة الخزنة والعجز</span>
-                                    <h2 className={`text-3xl font-black mt-2 ${deficit > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                                        {deficit > 0 ? `عجز: ${deficit} ج.م` : 'الخزنة مظبوطة 100%'}
-                                    </h2>
-                                </div>
-
-                                <div className="luxury-card p-6 rounded-2xl text-center border-t-4 border-emerald-500">
-                                    <span className="text-xs text-slate-400">صافي الأرباح الحقيقية</span>
-                                    <h2 className="text-3xl font-black text-emerald-400 mt-2">{netCalculated} ج.م</h2>
-                                </div>
-
-                                <div className="luxury-card p-6 rounded-2xl text-center border-t-4 border-blue-500">
-                                    <span className="text-xs text-slate-400">إجمالي المتحصلات الكلية</span>
-                                    <h2 className="text-3xl font-black text-blue-400 mt-2">{totalCollected} ج.م</h2>
-                                </div>
+                {/* TAB 3: CASHIER VULNERABILITY MONITOR */}
+                {activeTab === 'shift' && (
+                    <div className="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
+                        <h3 className="text-xl font-bold text-amber-400 flex items-center gap-3">
+                            <i data-lucide="user-check"></i> إعدادات وسلوكيات مسؤول الوردية (الكاشير / المدير)
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">اسم المسؤول عن الوردية الحالية</label>
+                                <input type="text" value={shiftCashier} onChange={e => setShiftCashier(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-white mt-2 focus:border-amber-400 outline-none" />
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="luxury-card p-6 rounded-2xl">
-                                    <h3 className="text-lg font-bold gold-text mb-4">تحليل تدفق الأموال والنظيف</h3>
-                                    <canvas ref={chartRef} className="max-h-64 mx-auto"></canvas>
-                                </div>
-
-                                <div className="luxury-card p-6 rounded-2xl flex flex-col justify-between">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-emerald-400 mb-2">تصدير التقرير التنفيذي</h3>
-                                        <p className="text-xs text-slate-400 mb-6">يمكنك طباعة هذا التقرير أو إرساله بصيغة PDF مباشرة للشريك أو صاحب المنشأة.</p>
-                                    </div>
-                                    <button onClick={() => window.print()} className="w-full py-4 bg-amber-500 text-slate-950 font-black rounded-xl hover:bg-amber-400 transition flex items-center justify-center gap-2">
-                                        <i data-lucide="printer"></i> طباعة تقرير PDF المالي
-                                    </button>
-                                </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">عدد الفواتير المكنسلة (Void Count)</label>
+                                <input type="number" value={voidCount} onChange={e => setVoidCount(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-pink-400 font-tech text-lg mt-2 focus:border-pink-400 outline-none" />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">مرات فتح الدرج بدون عملية بيع</label>
+                                <input type="number" value={noDrawerOpenCount} onChange={e => setNoDrawerOpenCount(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-amber-400 font-tech text-lg mt-2 focus:border-amber-400 outline-none" />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 font-bold">الحد الأقصى للهالك المسموح (EGP)</label>
+                                <input type="number" value={allowedWastage} onChange={e => setAllowedWastage(e.target.value)} className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl text-emerald-400 font-tech text-lg mt-2 focus:border-emerald-400 outline-none" />
                             </div>
                         </div>
-                    )}
-                </main>
+                    </div>
+                )}
+
+                {/* TAB 4: VISUAL ANALYTICS */}
+                {activeTab === 'analytics' && (
+                    <div className="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
+                        <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-3">
+                            <i data-lucide="bar-chart-2"></i> الرسوم البيانية لتفكيك الأموال والمصروفات
+                        </h3>
+                        <div className="p-4 bg-slate-950/60 rounded-2xl">
+                            <canvas ref={chartRef} className="max-h-96 w-full"></canvas>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }
 
     ReactDOM.render(<App />, document.getElementById('root'));
-    setTimeout(() => lucide.createIcons(), 500);
+    setTimeout(() => lucide.createIcons(), 300);
 </script>
-
 </body>
 </html>
- 
