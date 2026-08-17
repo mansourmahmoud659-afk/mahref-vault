@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حقيبة السمسار الذكية | Smart Broker HUD</title>
-    <!-- خط القاهرة + أيقونات FontAwesome -->
+    <title>منصة تسليم المنتجات الرقمية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
-            --bg-dark: #070b14;
-            --panel-bg: rgba(15, 23, 42, 0.75);
-            --primary-neon: #00f3ff;
-            --accent-gold: #ffb700;
-            --purple-glow: #8b5cf6;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-glow: rgba(0, 243, 255, 0.25);
-            --radius: 16px;
+            --border: #334155;
         }
 
         * {
@@ -32,490 +29,303 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        /* Futuristic Header */
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #fff 0%, var(--primary-neon) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-            letter-spacing: 1px;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 5px;
-        }
-
-        /* Futuristic Navigation Tabs */
-        .nav-tabs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            max-width: 900px;
-            margin: 0 auto 30px auto;
-        }
-
-        .tab-btn {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-glow);
-            padding: 14px 10px;
-            border-radius: var(--radius);
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .tab-btn:hover, .tab-btn.active {
-            color: #fff;
-            background: rgba(0, 243, 255, 0.15);
-            border-color: var(--primary-neon);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .tab-btn.active i {
-            color: var(--primary-neon);
-            filter: drop-shadow(0 0 5px var(--primary-neon));
-        }
-
-        /* Container Sections */
-        .tab-content {
-            display: none;
-            max-width: 1000px;
-            margin: 0 auto;
-            animation: fadeIn 0.4s ease-in-out forwards;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Glassmorphism Cards */
-        .glass-card {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-glow);
-            border-radius: var(--radius);
-            padding: 24px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-        }
-
-        .glass-card h2 {
-            font-size: 1.3rem;
-            color: var(--primary-neon);
-            margin-bottom: 20px;
-            display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
+            padding: 20px;
         }
 
-        /* Form Inputs */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
+        .container {
+            width: 100%;
+            max-width: 550px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            margin-bottom: 18px;
         }
 
-        .form-group label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.88rem;
             font-weight: 600;
         }
 
-        .form-control {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 12px 15px;
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             color: #fff;
             font-size: 0.95rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-neon);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-            background: rgba(255, 255, 255, 0.08);
+        input:focus, textarea:focus {
+            border-color: var(--primary);
         }
 
-        /* Cyber Buttons */
-        .cyber-btn {
-            background: linear-gradient(135deg, var(--primary-neon), #00a8ff);
-            color: #000;
-            font-weight: 800;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 10px;
-            cursor: pointer;
+        .btn {
             width: 100%;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        .cyber-btn:hover {
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
-            transform: scale(1.02);
-        }
-
-        /* Preview Display Box */
-        .preview-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px dashed var(--primary-neon);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .preview-box pre {
-            white-space: pre-wrap;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #e2e8f0;
-        }
-
-        /* Interactive Grid Layout for Split Screens */
-        .split-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .split-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Badge Status */
-        .badge {
-            background: rgba(255, 183, 0, 0.15);
-            border: 1px solid var(--accent-gold);
-            color: var(--accent-gold);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        /* Match Result List */
-        .match-card {
-            background: rgba(255,255,255,0.03);
-            border-right: 4px solid var(--primary-neon);
-            padding: 15px;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
             border-radius: 8px;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--accent);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--bg-dark);
+            border: 1px dashed var(--primary);
+            border-radius: 8px;
+        }
+
+        .result-box p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .link-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .link-container input {
+            font-size: 0.85rem;
+        }
+
+        /* Buyer View Styles */
+        .buyer-view {
+            display: none;
+            text-align: center;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 12px 0;
+        }
+
+        .instructions {
+            background: var(--bg-dark);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 16px 0;
+            text-align: right;
+        }
+
+        .delivery-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1><i class="fa-solid fa-microchip"></i> SMART BROKER HUD</h1>
-        <p>حقيبة السمسار والمؤشرات العقارية الذكية v2.0</p>
-    </header>
+<div class="container">
+    <!-- SELLER GENERATOR VIEW -->
+    <div id="sellerView">
+        <div class="header">
+            <h1><i class="fa-solid fa-bolt" style="color: var(--primary);"></i> مولّد صفحات التسليم</h1>
+            <p>أنشئ رابط تسليم مباشر وآلي لمنتجك الرقمي في ثوانٍ</p>
+        </div>
 
-    <!-- Navigation Bar -->
-    <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('cards-gen')">
-            <i class="fa-solid fa-bullhorn"></i> مولد الكروت
+        <div class="form-group">
+            <label>اسم المنتج الرقمي</label>
+            <input type="text" id="titleInput" placeholder="مثال: قالب إدارة الميزانية Excel">
+        </div>
+
+        <div class="form-group">
+            <label>السعر (بالجنيه المصري)</label>
+            <input type="number" id="priceInput" placeholder="مثال: 150">
+        </div>
+
+        <div class="form-group">
+            <label>وصف قصير أو تعليمات للعميل</label>
+            <textarea id="descInput" rows="2" placeholder="أدخل هنا أي معلومات سريعة للعميل..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>رابط الملف على Google Drive</label>
+            <input type="text" id="driveInput" placeholder="https://drive.google.com/file/d/.../view">
+        </div>
+
+        <div class="form-group">
+            <label>رابط الدفع (EasyKash / Paymob / محفظة)</label>
+            <input type="text" id="payInput" placeholder="رابط بوابة الدفع أو رقم التحويل">
+        </div>
+
+        <button class="btn" onclick="generateProductLink()">
+            <i class="fa-solid fa-link"></i> إنشاء الرابط الموحد
         </button>
-        <button class="tab-btn" onclick="switchTab('matcher')">
-            <i class="fa-solid fa-diagram-project"></i> المطابقة الذكية
-        </button>
-        <button class="tab-btn" onclick="switchTab('calculator')">
-            <i class="fa-solid fa-calculator"></i> حاسبة الأقساط
-        </button>
-        <button class="tab-btn" onclick="switchTab('agenda')">
-            <i class="fa-solid fa-calendar-check"></i> الأجندة والمتابعة
-        </button>
-    </nav>
 
-    <!-- TAB 1: CARD & POST GENERATOR -->
-    <section id="cards-gen" class="tab-content active">
-        <div class="split-layout">
-            <div class="glass-card">
-                <h2><i class="fa-solid fa-pen-to-square"></i> بيانات العقار</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>نوع العقار والمنطقة</label>
-                        <input type="text" id="p-title" class="form-control" value="شقة للبيع - النرجس الجديدة">
-                    </div>
-                    <div class="form-group">
-                        <label>المساحة (م²)</label>
-                        <input type="number" id="p-area" class="form-control" value="160">
-                    </div>
-                    <div class="form-group">
-                        <label>السعر الإجمالي (ج.م)</label>
-                        <input type="text" id="p-price" class="form-control" value="3,500,000">
-                    </div>
-                    <div class="form-group">
-                        <label>نظام السداد</label>
-                        <input type="text" id="p-plan" class="form-control" value="مقدم 10% والباقت على 7 سنوات">
-                    </div>
-                </div>
-                <div class="form-group" style="margin-top: 15px;">
-                    <label>المميزات الإضافية</label>
-                    <input type="text" id="p-features" class="form-control" value="بحري بالكامل، فيو حديقة، تسليم فوري">
-                </div>
-                <button class="cyber-btn" onclick="generatePost()">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> توليد بوست الواتساب
-                </button>
-            </div>
-
-            <div class="glass-card">
-                <h2><i class="fa-solid fa-eye"></i> المعاينة المباشرة</h2>
-                <div class="preview-box">
-                    <pre id="post-output">اضغط على "توليد" لعرض الرسالة المنسقة هنا...</pre>
-                </div>
-                <button class="cyber-btn" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff;" onclick="copyWhatsApp()">
-                    <i class="fa-brands fa-whatsapp"></i> نسخ ومشاركة عبر واتساب
-                </button>
+        <div class="result-box" id="resultBox">
+            <p>انسخ هذا الرابط وأرسله لعميلك مباشرة:</p>
+            <div class="link-container">
+                <input type="text" id="generatedLink" readonly>
+                <button class="btn" style="width: auto;" onclick="copyLink()"><i class="fa-regular fa-copy"></i></button>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- TAB 2: SMART BUYER MATCHER -->
-    <section id="matcher" class="tab-content">
-        <div class="glass-card">
-            <h2><i class="fa-solid fa-filter"></i> مطابقة طلبات المشترين بالعروض M-Engine</h2>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>المنطقة المطلوبة</label>
-                    <select id="m-area" class="form-control" onchange="runMatch()">
-                        <option value="all">جميع المناطق</option>
-                        <option value="التجمع">التجمع الخامس</option>
-                        <option value="زايد">الشيخ زايد</option>
-                        <option value="الشروق">الشروق</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>الحد الأقصى للميزانية (ج.م)</label>
-                    <input type="number" id="m-budget" class="form-control" value="4000000" oninput="runMatch()">
-                </div>
-            </div>
+    <!-- BUYER LANDING & DELIVERY VIEW -->
+    <div idbuyerView" class="buyer-view">
+        <div class="header">
+            <h1 id="buyerTitle">اسم المنتج</h1>
+            <div class="price-badge" id="buyerPrice">0 ج.م</div>
+            <p id="buyerDesc">وصف المنتج</p>
         </div>
 
-        <div class="glass-card">
-            <h2><i class="fa-solid fa-list-check"></i> العروض المطابقة لطلب العميل</h2>
-            <div id="match-results">
-                <!-- النتائج الديناميكية ستظهر هنا -->
-            </div>
+        <div class="instructions">
+            <p><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> <b>خطوات الحصول على الملف:</b></p>
+            <ol style="margin-right: 20px; margin-top: 5px;">
+                <li>اضغط على زر الدفع بالأسفل لإتمام العملية.</li>
+                <li>بعد الدفع مباشرة، اضغط على زر "تحميل الملف الآن".</li>
+            </ol>
         </div>
-    </section>
 
-    <!-- TAB 3: INSTALLMENT & COMMISSION CALCULATOR -->
-    <section id="calculator" class="tab-content">
-        <div class="split-layout">
-            <div class="glass-card">
-                <h2><i class="fa-solid fa-calculator"></i> مدخلات الحساب</h2>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label>إجمالي سعر العقار (ج.م)</label>
-                    <input type="number" id="calc-price" class="form-control" value="3000000" oninput="calculate()">
-                </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label>نسبة المقدم (%)</label>
-                    <input type="number" id="calc-dp-percent" class="form-control" value="15" oninput="calculate()">
-                </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label>مدة التقسيط (بالسنوات)</label>
-                    <input type="number" id="calc-years" class="form-control" value="5" oninput="calculate()">
-                </div>
-                <div class="form-group">
-                    <label>نسبة العمولة (%)</label>
-                    <input type="number" id="calc-comm-percent" class="form-control" value="2.5" oninput="calculate()">
-                </div>
-            </div>
+        <a id="payBtn" href="#" target="_blank" class="btn" style="text-decoration: none; margin-bottom: 12px;">
+            <i class="fa-solid fa-credit-card"></i> ادفع الآن بالجنيه المصري
+        </a>
 
-            <div class="glass-card">
-                <h2><i class="fa-solid fa-chart-pie"></i> التقرير المالي</h2>
-                <div class="preview-box" style="display: flex; flex-direction: column; gap: 15px;">
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem;">قيمة المقدم:</span>
-                        <h3 id="res-dp" style="color: var(--accent-gold);">0 ج.م</h3>
-                    </div>
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem;">القسط الشهري المتوقع:</span>
-                        <h3 id="res-monthly" style="color: var(--primary-neon);">0 ج.م</h3>
-                    </div>
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem;">إجمالي عمولة السمسار:</span>
-                        <h3 id="res-comm" style="color: #4ade80;">0 ج.م</h3>
-                    </div>
-                </div>
-            </div>
+        <div class="delivery-section">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">هل أتممت الدفع؟ استلم ملفك فوراً:</p>
+            <a id="downloadBtn" href="#" target="_blank" class="btn btn-success" style="text-decoration: none;">
+                <i class="fa-solid fa-download"></i> تحميل الملف الآن
+            </a>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- TAB 4: AGENDA & FOLLOW-UPS -->
-    <section id="agenda" class="tab-content">
-        <div class="glass-card">
-            <h2><i class="fa-solid fa-clock"></i> مواعيد المعاينات والمتابعات اليومية</h2>
-            <div id="agenda-list">
-                <div class="match-card">
-                    <div>
-                        <h4 style="color:#fff;">معاينة شقة التجمع - أستاذ أحمد</h4>
-                        <p style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-calendar"></i> اليوم 5:00 مساءً</p>
-                    </div>
-                    <span class="badge">مؤكدة</span>
-                </div>
-                <div class="match-card">
-                    <div>
-                        <h4 style="color:#fff;">متابعة هاتفية - مهندس محمود (فيلا زايد)</h4>
-                        <p style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-calendar"></i> غداً 2:00 ظهراً</p>
-                    </div>
-                    <span class="badge" style="border-color: var(--primary-neon); color: var(--primary-neon);">متابعة</span>
-                </div>
-            </div>
-        </div>
-    </section>
+<script>
+    // Extract Direct Download Link from Google Drive Link
+    function getDriveDirectLink(url) {
+        const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) {
+            return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+        }
+        return url; // fallback if regex fails
+    }
 
-    <!-- JavaScript code -->
-    <script>
-        // Tab Switcher Function
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            
-            if(tabId === 'matcher') runMatch();
-            if(tabId === 'calculator') calculate();
+    // Generate Encoded Payload
+    function generateProductLink() {
+        const title = document.getElementById('titleInput').value.trim();
+        const price = document.getElementById('priceInput').value.trim();
+        const desc = document.getElementById('descInput').value.trim();
+        const drive = document.getElementById('driveInput').value.trim();
+        const pay = document.getElementById('payInput').value.trim();
+
+        if (!title || !drive || !pay) {
+            alert('يرجى ملء كافة البيانات الأساسية (العنوان، رابط Drive، ورابط الدفع)');
+            return;
         }
 
-        // Generate WhatsApp Post
-        function generatePost() {
-            const title = document.getElementById('p-title').value;
-            const area = document.getElementById('p-area').value;
-            const price = document.getElementById('p-price').value;
-            const plan = document.getElementById('p-plan').value;
-            const features = document.getElementById('p-features').value;
+        const directDrive = getDriveDirectLink(drive);
 
-            const text = `🏢 *عرض عقاري مميز جداً* 🏢\n\n` +
-                         `📍 *الوصف:* ${title}\n` +
-                         `📐 *المساحة:* ${area} متر مربع\n` +
-                         `💰 *السعر:* ${price} جنيه\n` +
-                         `💳 *نظام السداد:* ${plan}\n` +
-                         `قالب المميزات: ✨ ${features}\n\n` +
-                         `📲 *للمعاينة والاستفسار تواصل فوراً معنا!*`;
+        const payload = {
+            t: title,
+            p: price,
+            d: desc,
+            file: directDrive,
+            pay: pay
+        };
 
-            document.getElementById('post-output').innerText = text;
-        }
+        const jsonString = JSON.stringify(payload);
+        const encoded = btoa(encodeURIComponent(jsonString));
 
-        // Copy Post Content
-        function copyWhatsApp() {
-            const content = document.getElementById('post-output').innerText;
-            navigator.clipboard.writeText(content);
-            alert('تم نسخ النص بنجاح! يمكنك لصقه الآن في واتساب.');
-        }
+        const fullLink = `${window.location.origin}${window.location.pathname}#p=${encoded}`;
+        
+        document.getElementById('generatedLink').value = fullLink;
+        document.getElementById('resultBox').style.display = 'block';
+    }
 
-        // Sample Data for Matching Engine
-        const propertiesDatabase = [
-            { title: "شقة 3 غرف بالنرجس", areaName: "التجمع", price: 3500000, space: 160 },
-            { title: "روف لقطة في الياسمين", areaName: "التجمع", price: 2800000, space: 200 },
-            { title: "فيلا مستقلة زايد", areaName: "زايد", price: 8500000, space: 350 },
-            { title: "شقة للبيع بالشروق", areaName: "الشروق", price: 2100000, space: 130 }
-        ];
+    function copyLink() {
+        const copyText = document.getElementById('generatedLink');
+        copyText.select();
+        document.execCommand('copy');
+        alert('تم نسخ الرابط بنجاح!');
+    }
 
-        // Matching Logic
-        function runMatch() {
-            const selectedArea = document.getElementById('m-area').value;
-            const maxBudget = parseFloat(document.getElementById('m-budget').value) || 0;
-            const resultsContainer = document.getElementById('match-results');
+    // Check Routing on Page Load
+    window.addEventListener('load', () => {
+        const hash = window.location.hash;
+        if (hash.startsWith('#p=')) {
+            try {
+                const encodedData = hash.replace('#p=', '');
+                const jsonString = decodeURIComponent(atob(encodedData));
+                const data = JSON.parse(jsonString);
 
-            resultsContainer.innerHTML = '';
+                // Show Buyer View & Hide Seller View
+                document.getElementById('sellerView').style.display = 'none';
+                document.getElementById('buyerView').style.display = 'block';
 
-            const filtered = propertiesDatabase.filter(item => {
-                const areaMatch = selectedArea === 'all' || item.areaName === selectedArea;
-                const budgetMatch = item.price <= maxBudget;
-                return areaMatch && budgetMatch;
-            });
+                // Populate Data
+                document.getElementById('buyerTitle').innerText = data.t;
+                document.getElementById('buyerPrice').innerText = `${data.p} ج.م`;
+                document.getElementById('buyerDesc').innerText = data.d || '';
+                document.getElementById('payBtn').href = data.pay;
+                document.getElementById('downloadBtn').href = data.file;
 
-            if(filtered.length === 0) {
-                resultsContainer.innerHTML = '<p style="color:var(--text-muted);">لا توجد عروض مطابقة لهذه الميزانية والمنطقة حالياً.</p>';
-                return;
+            } catch (e) {
+                console.error('Invalid URL Payload', e);
             }
-
-            filtered.forEach(item => {
-                resultsContainer.innerHTML += `
-                    <div class="match-card">
-                        <div>
-                            <h4 style="color:#fff;">${item.title}</h4>
-                            <p style="color:var(--text-muted); font-size:0.85rem;">المنطقة: ${item.areaName} | المساحة: ${item.space} م²</p>
-                        </div>
-                        <span class="badge">${item.price.toLocaleString()} ج.م</span>
-                    </div>
-                `;
-            });
         }
-
-        // Installment Calculator Logic
-        function calculate() {
-            const price = parseFloat(document.getElementById('calc-price').value) || 0;
-            const dpPercent = parseFloat(document.getElementById('calc-dp-percent').value) || 0;
-            const years = parseFloat(document.getElementById('calc-years').value) || 1;
-            const commPercent = parseFloat(document.getElementById('calc-comm-percent').value) || 0;
-
-            const downPayment = price * (dpPercent / 100);
-            const remaining = price - downPayment;
-            const monthlyInstallment = (remaining / (years * 12));
-            const commission = price * (commPercent / 100);
-
-            document.getElementById('res-dp').innerText = downPayment.toLocaleString() + ' ج.م';
-            document.getElementById('res-monthly').innerText = Math.round(monthlyInstallment).toLocaleString() + ' ج.م / شهرياً';
-            document.getElementById('res-comm').innerText = commission.toLocaleString() + ' ج.م';
-        }
-
-        // Initial Execution
-        generatePost();
-    </script>
+    });
+</script>
 </body>
 </html>
