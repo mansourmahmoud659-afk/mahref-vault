@@ -103,6 +103,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
         }
 
         .btn:hover {
@@ -224,7 +225,7 @@
     </div>
 
     <!-- BUYER LANDING & DELIVERY VIEW -->
-    <div idbuyerView" class="buyer-view">
+    <div id="buyerView" class="buyer-view">
         <div class="header">
             <h1 id="buyerTitle">اسم المنتج</h1>
             <div class="price-badge" id="buyerPrice">0 ج.م</div>
@@ -239,13 +240,13 @@
             </ol>
         </div>
 
-        <a id="payBtn" href="#" target="_blank" class="btn" style="text-decoration: none; margin-bottom: 12px;">
+        <a id="payBtn" href="#" target="_blank" class="btn" style="margin-bottom: 12px;">
             <i class="fa-solid fa-credit-card"></i> ادفع الآن بالجنيه المصري
         </a>
 
         <div class="delivery-section">
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">هل أتممت الدفع؟ استلم ملفك فوراً:</p>
-            <a id="downloadBtn" href="#" target="_blank" class="btn btn-success" style="text-decoration: none;">
+            <a id="downloadBtn" href="#" target="_blank" class="btn btn-success">
                 <i class="fa-solid fa-download"></i> تحميل الملف الآن
             </a>
         </div>
@@ -259,7 +260,16 @@
         if (match && match[1]) {
             return `https://drive.google.com/uc?export=download&id=${match[1]}`;
         }
-        return url; // fallback if regex fails
+        return url;
+    }
+
+    // Encoding Unicode safely
+    function utf8ToB64(str) {
+        return window.btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function b64ToUtf8(str) {
+        return decodeURIComponent(escape(window.atob(str)));
     }
 
     // Generate Encoded Payload
@@ -286,7 +296,7 @@
         };
 
         const jsonString = JSON.stringify(payload);
-        const encoded = btoa(encodeURIComponent(jsonString));
+        const encoded = utf8ToB64(jsonString);
 
         const fullLink = `${window.location.origin}${window.location.pathname}#p=${encoded}`;
         
@@ -307,7 +317,7 @@
         if (hash.startsWith('#p=')) {
             try {
                 const encodedData = hash.replace('#p=', '');
-                const jsonString = decodeURIComponent(atob(encodedData));
+                const jsonString = b64ToUtf8(encodedData);
                 const data = JSON.parse(jsonString);
 
                 // Show Buyer View & Hide Seller View
@@ -316,7 +326,7 @@
 
                 // Populate Data
                 document.getElementById('buyerTitle').innerText = data.t;
-                document.getElementById('buyerPrice').innerText = `${data.p} ج.م`;
+                document.getElementById('buyerPrice').innerText = `${data.p || 0} ج.م`;
                 document.getElementById('buyerDesc').innerText = data.d || '';
                 document.getElementById('payBtn').href = data.pay;
                 document.getElementById('downloadBtn').href = data.file;
