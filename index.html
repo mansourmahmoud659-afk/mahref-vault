@@ -234,10 +234,10 @@
 
         <div class="instructions">
             <p><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> <b>خطوات الحصول على الملف:</b></p>
-            <ol style="margin-right: 20px; margin-top: 5px;">
-                <li>اضغط على زر الدفع بالأسفل لإتمام العملية.</li>
-                <li>بعد الدفع مباشرة، اضغط على زر "تحميل الملف الآن".</li>
-            </ol>
+
+                <li style="margin-right: 20px; margin-top: 5px;">اضغط على زر الدفع بالأسفل لإتمام العملية.</li>
+                <li style="margin-right: 20px;">بعد الدفع مباشرة، اضغط على زر "تحميل الملف الآن".</li>
+
         </div>
 
         <a id="payBtn" href="#" target="_blank" class="btn" style="margin-bottom: 12px;">
@@ -263,7 +263,7 @@
         return url;
     }
 
-    // Encoding Unicode safely
+    // Encoding Arabic / Unicode safely to Base64
     function utf8ToB64(str) {
         return window.btoa(unescape(encodeURIComponent(str)));
     }
@@ -311,12 +311,12 @@
         alert('تم نسخ الرابط بنجاح!');
     }
 
-    // Check Routing on Page Load
-    window.addEventListener('load', () => {
+    // Check Routing and render View
+    function renderView() {
         const hash = window.location.hash;
-        if (hash.startsWith('#p=')) {
+        if (hash.includes('#p=')) {
             try {
-                const encodedData = hash.replace('#p=', '');
+                const encodedData = hash.split('#p=')[1];
                 const jsonString = b64ToUtf8(encodedData);
                 const data = JSON.parse(jsonString);
 
@@ -334,8 +334,14 @@
             } catch (e) {
                 console.error('Invalid URL Payload', e);
             }
+        } else {
+            document.getElementById('sellerView').style.display = 'block';
+            document.getElementById('buyerView').style.display = 'none';
         }
-    });
+    }
+
+    window.addEventListener('load', renderView);
+    window.addEventListener('hashchange', renderView);
 </script>
 </body>
 </html>
