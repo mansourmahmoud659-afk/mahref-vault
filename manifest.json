@@ -1,0 +1,27 @@
+{
+  "name": "دفتر العيلة",
+  "short_name": "دفتر العيلة",
+  "description": "متتبع المصروفات الشهري",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f0d",
+  "theme_color": "#1b4332",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3135/3135706.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/256/3135/3135706.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/128/3135/3135706.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ]
+}
