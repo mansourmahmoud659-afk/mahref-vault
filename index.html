@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b4332">
 <title>دفتر العيلة</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Tajawal',sans-serif; }
 body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
 
-/* ===== شاشة التفعيل ===== */
 #activation-screen {
   position:fixed; inset:0; background:linear-gradient(135deg,#0a0f0d,#1b4332);
   display:flex; align-items:center; justify-content:center; z-index:9999;
@@ -36,7 +36,6 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
 .msg.err { color:#ff6b6b; }
 .msg.ok { color:#52b788; }
 
-/* ===== الأدمن ===== */
 #admin-screen { display:none; padding:20px; max-width:700px; margin:0 auto; }
 .admin-header {
   background:linear-gradient(135deg,#1b4332,#0a0f0d);
@@ -45,13 +44,11 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
 }
 .admin-header h1 { color:#52b788; font-size:24px; }
 .admin-header p { color:#95d5b2; font-size:13px; margin-top:5px; }
-
 .admin-card {
   background:#1a1f1d; border:1px solid rgba(82,183,136,0.1);
   border-radius:16px; padding:20px; margin-bottom:15px;
 }
 .admin-card h3 { color:#52b788; margin-bottom:15px; font-size:16px; }
-
 .admin-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
 .admin-row input {
   flex:1; min-width:150px; padding:12px; border-radius:10px;
@@ -59,7 +56,6 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
   color:#d8f3dc; font-size:14px;
 }
 .admin-row input:focus { outline:none; border-color:#52b788; }
-
 .btn {
   padding:12px 24px; border-radius:10px; border:none;
   background:linear-gradient(135deg,#52b788,#2d6a4f); color:white;
@@ -68,8 +64,6 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
 .btn:hover { transform:translateY(-2px); }
 .btn-red { background:linear-gradient(135deg,#ff6b6b,#d00000); }
 .btn-blue { background:linear-gradient(135deg,#4cc9f0,#4361ee); }
-
-/* جدول الأكواد */
 .code-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
 .code-table th { background:#1b4332; color:#d8f3dc; padding:12px; text-align:right; }
 .code-table td { padding:10px 12px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4c7; }
@@ -77,7 +71,6 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
 .code-table .free { color:#52b788; }
 .code-table .device { color:#ffd93d; font-size:11px; }
 
-/* ===== التطبيق ===== */
 #app { display:none; }
 .header {
   background:linear-gradient(135deg,#1b4332,#0a0f0d);
@@ -85,9 +78,7 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
 }
 .header h1 { font-size:22px; color:#d8f3dc; }
 .header p { color:#95d5b2; font-size:12px; margin-top:5px; }
-
 .container { max-width:800px; margin:0 auto; padding:15px; }
-
 .tabs { display:flex; gap:8px; margin-bottom:15px; overflow-x:auto; padding-bottom:5px; }
 .tab {
   padding:10px 16px; border-radius:10px; background:#1a1f1d;
@@ -95,27 +86,22 @@ body { background:#0a0f0d; color:#e8f5e9; min-height:100vh; }
   cursor:pointer; white-space:nowrap; font-size:13px; transition:0.3s;
 }
 .tab.active { background:rgba(82,183,136,0.2); border-color:#52b788; color:#d8f3dc; }
-
 .content { display:none; }
 .content.active { display:block; }
-
 .card {
   background:#1a1f1d; border:1px solid rgba(82,183,136,0.1);
   border-radius:16px; padding:18px; margin-bottom:12px;
 }
 .card h3 { color:#52b788; font-size:15px; margin-bottom:12px; }
-
 input, select {
   width:100%; padding:12px 14px; border-radius:10px;
   border:1px solid rgba(82,183,136,0.2); background:#0a0f0d;
   color:#d8f3dc; font-size:14px; margin-bottom:10px;
 }
 input:focus, select:focus { outline:none; border-color:#52b788; }
-
 table { width:100%; border-collapse:collapse; font-size:12px; }
 th { background:#1b4332; color:#d8f3dc; padding:10px; text-align:right; font-size:12px; }
 td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4c7; }
-
 .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:15px; }
 .stat-card {
   background:#1a1f1d; border-radius:12px; padding:15px; text-align:center;
@@ -126,31 +112,34 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
 .stat-card .value.green { color:#52b788; }
 .stat-card .value.red { color:#ff6b6b; }
 .stat-card .value.yellow { color:#ffd93d; }
-
 .gap-alert {
   background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.3);
   border-radius:12px; padding:12px; margin-bottom:12px;
 }
 .gap-alert h4 { color:#ff6b6b; font-size:13px; margin-bottom:4px; }
 .gap-alert p { color:#ffadad; font-size:12px; }
-
 .footer-app {
   text-align:center; padding:15px; color:#6c757d; font-size:11px;
   border-top:1px solid rgba(82,183,136,0.1); margin-top:15px;
 }
-
-/* زر الأدمن */
 .admin-link {
   position:fixed; bottom:15px; left:15px;
   background:rgba(82,183,136,0.1); border:1px solid rgba(82,183,136,0.2);
   color:#52b788; padding:8px 14px; border-radius:20px;
   font-size:11px; cursor:pointer; z-index:100;
 }
+.offline-badge {
+  position:fixed; top:10px; left:10px;
+  background:rgba(82,183,136,0.2); border:1px solid rgba(82,183,136,0.3);
+  color:#52b788; padding:5px 12px; border-radius:20px;
+  font-size:11px; z-index:100; display:none;
+}
 </style>
 </head>
 <body>
 
-<!-- ===== شاشة التفعيل ===== -->
+<div class="offline-badge" id="offline-badge">📴 أوفلاين</div>
+
 <div id="activation-screen">
   <div class="act-box">
     <h2>🔐 تفعيل دفتر العيلة</h2>
@@ -162,13 +151,11 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
   </div>
 </div>
 
-<!-- ===== صفحة الأدمن ===== -->
 <div id="admin-screen">
   <div class="admin-header">
     <h1>⚙️ لوحة تحكم الأكواد</h1>
     <p>أضف أكواد جديدة — شوف أي كود اتستخدم وعلى أي جهاز</p>
   </div>
-
   <div class="admin-card">
     <h3>➕ إضافة كود جديد</h3>
     <div class="admin-row">
@@ -177,20 +164,11 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
       <button class="btn btn-blue" onclick="generateCode()">🎲 توليد عشوائي</button>
     </div>
   </div>
-
   <div class="admin-card">
     <h3>📋 قائمة الأكواد</h3>
     <div style="overflow-x:auto;">
       <table class="code-table">
-        <thead>
-          <tr>
-            <th>الكود</th>
-            <th>الحالة</th>
-            <th>الجهاز</th>
-            <th>تاريخ التفعيل</th>
-            <th>حذف</th>
-          </tr>
-        </thead>
+        <thead><tr><th>الكود</th><th>الحالة</th><th>الجهاز</th><th>تاريخ التفعيل</th><th>حذف</th></tr></thead>
         <tbody id="codes-list"></tbody>
       </table>
     </div>
@@ -203,13 +181,11 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
   </div>
 </div>
 
-<!-- ===== التطبيق ===== -->
 <div id="app">
   <div class="header">
     <h1>📒 دفتر العيلة</h1>
     <p>متتبع المصروفات الشهري</p>
   </div>
-
   <div class="container">
     <div class="tabs">
       <div class="tab active" onclick="showTab('dash')">📊 ملخص</div>
@@ -217,38 +193,22 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
       <div class="tab" onclick="showTab('expense')">📝 المصروفات</div>
       <div class="tab" onclick="showTab('report')">📅 التقارير</div>
     </div>
-
     <div id="dash" class="content active">
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="label">💰 إجمالي الدخل</div>
-          <div class="value green" id="dash-income">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">💸 إجمالي المصروفات</div>
-          <div class="value red" id="dash-expense">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">💵 المتبقي</div>
-          <div class="value yellow" id="dash-remain">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">📉 نسبة الادخار</div>
-          <div class="value green" id="dash-save">0%</div>
-        </div>
+        <div class="stat-card"><div class="label">💰 إجمالي الدخل</div><div class="value green" id="dash-income">0</div></div>
+        <div class="stat-card"><div class="label">💸 إجمالي المصروفات</div><div class="value red" id="dash-expense">0</div></div>
+        <div class="stat-card"><div class="label">💵 المتبقي</div><div class="value yellow" id="dash-remain">0</div></div>
+        <div class="stat-card"><div class="label">📉 نسبة الادخار</div><div class="value green" id="dash-save">0%</div></div>
       </div>
-
       <div class="gap-alert" id="gap-box" style="display:none;">
         <h4>⚠️ عندك "فجوة" في المصروفات!</h4>
         <p id="gap-text">فيه فلوس بتروح من غير ما تسجلها.</p>
       </div>
-
       <div class="card">
         <h3>📊 أكثر الفئات مصروفاً</h3>
         <div id="top-cats"></div>
       </div>
     </div>
-
     <div id="income" class="content">
       <div class="card">
         <h3>➕ إضافة دخل</h3>
@@ -259,15 +219,9 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
       </div>
       <div class="card">
         <h3>📋 سجل الدخل</h3>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>التاريخ</th><th>المصدر</th><th>المبلغ</th><th>حذف</th></tr></thead>
-            <tbody id="income-list"></tbody>
-          </table>
-        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>التاريخ</th><th>المصدر</th><th>المبلغ</th><th>حذف</th></tr></thead><tbody id="income-list"></tbody></table></div>
       </div>
     </div>
-
     <div id="expense" class="content">
       <div class="card">
         <h3>➕ إضافة مصروف</h3>
@@ -294,311 +248,69 @@ td { padding:8px 10px; border-bottom:1px solid rgba(82,183,136,0.1); color:#b7e4
       </div>
       <div class="card">
         <h3>📋 سجل المصروفات</h3>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>التاريخ</th><th>الفئة</th><th>البند</th><th>المبلغ</th><th>حذف</th></tr></thead>
-            <tbody id="expense-list"></tbody>
-          </table>
-        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>التاريخ</th><th>الفئة</th><th>البند</th><th>المبلغ</th><th>حذف</th></tr></thead><tbody id="expense-list"></tbody></table></div>
       </div>
     </div>
-
     <div id="report" class="content">
       <div class="card">
         <h3>📅 ملخص شهري</h3>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>الشهر</th><th>الدخل</th><th>المصروفات</th><th>المتبقي</th></tr></thead>
-            <tbody id="report-list"></tbody>
-          </table>
-        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>الشهر</th><th>الدخل</th><th>المصروفات</th><th>المتبقي</th></tr></thead><tbody id="report-list"></tbody></table></div>
       </div>
     </div>
-
     <div class="footer-app">
       دفتر العيلة © 2026 — مرخص لـ <span id="license-name"></span>
     </div>
   </div>
 </div>
 
-<!-- زر الأدمن -->
 <div class="admin-link" onclick="openAdmin()">⚙️</div>
 
 <script>
-// ==================== أدوات مشتركة ====================
-function getDeviceId() {
-  const raw = navigator.userAgent + screen.width + screen.height + Intl.DateTimeFormat().resolvedOptions().timeZone;
-  let hash = 0;
-  for (let i = 0; i < raw.length; i++) {
-    hash = ((hash << 5) - hash) + raw.charCodeAt(i);
-    hash |= 0;
-  }
-  return 'DEV-' + Math.abs(hash).toString(36).toUpperCase().slice(0, 8);
-}
+const swCode = `self.addEventListener('install',function(e){e.waitUntil(caches.open('dftar-v1').then(function(c){return c.addAll(['/']);}));self.skipWaiting();});self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});self.addEventListener('fetch',function(e){e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request).catch(function(){return caches.match('/');});}));});`;
+if('serviceWorker' in navigator){const blob=new Blob([swCode],{type:'application/javascript'});const swUrl=URL.createObjectURL(blob);navigator.serviceWorker.register(swUrl).then(function(){}).catch(function(){});}
+window.addEventListener('offline',function(){document.getElementById('offline-badge').style.display='block';});
+window.addEventListener('online',function(){document.getElementById('offline-badge').style.display='none';});
+if(!navigator.onLine){document.getElementById('offline-badge').style.display='block';}
 
-const DEVICE_ID = getDeviceId();
+function getDeviceId(){const raw=navigator.userAgent+screen.width+screen.height+Intl.DateTimeFormat().resolvedOptions().timeZone;let hash=0;for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}return'DEV-'+Math.abs(hash).toString(36).toUpperCase().slice(0,8);}
+const DEVICE_ID=getDeviceId();
 
-// ==================== نظام الأكواد ====================
-function getCodes() {
-  try {
-    return JSON.parse(localStorage.getItem('dftar_codes_v2')) || [];
-  } catch { return []; }
-}
+function getCodes(){try{return JSON.parse(localStorage.getItem('dftar_codes_v2'))||[];}catch{return[];}}
+function saveCodes(codes){localStorage.setItem('dftar_codes_v2',JSON.stringify(codes));}
+function initCodes(){if(getCodes().length===0){saveCodes([{code:"FAM-7X2K-9M1P",used:false,deviceId:null,activatedAt:null},{code:"FAM-3A8B-4C5D",used:false,deviceId:null,activatedAt:null},{code:"FAM-1Q2W-3E4R",used:false,deviceId:null,activatedAt:null},{code:"FAM-5T6Y-7U8I",used:false,deviceId:null,activatedAt:null},{code:"FAM-9O0P-1A2S",used:false,deviceId:null,activatedAt:null}]);}}
 
-function saveCodes(codes) {
-  localStorage.setItem('dftar_codes_v2', JSON.stringify(codes));
-}
+function activate(){const input=document.getElementById('code-input').value.trim().toUpperCase();const err=document.getElementById('err-msg');const ok=document.getElementById('ok-msg');if(!input){err.textContent='❌ اكتب الكود';err.style.display='block';ok.style.display='none';return;}const codes=getCodes();const codeObj=codes.find(c=>c.code===input);if(!codeObj){err.textContent='❌ الكود غير موجود';err.style.display='block';ok.style.display='none';return;}if(codeObj.used&&codeObj.deviceId!==DEVICE_ID){err.textContent='❌ الكود مستخدم على جهاز آخر';err.style.display='block';ok.style.display='none';return;}codeObj.used=true;codeObj.deviceId=DEVICE_ID;codeObj.activatedAt=new Date().toLocaleString('ar-EG');saveCodes(codes);localStorage.setItem('dftar_activated','true');localStorage.setItem('dftar_code',input);ok.textContent='✅ تم التفعيل بنجاح!';ok.style.display='block';err.style.display='none';setTimeout(()=>{showApp();},800);}
 
-function initCodes() {
-  // أكواد افتراضية لو مفيش
-  if (getCodes().length === 0) {
-    saveCodes([
-      {code:"FAM-7X2K-9M1P", used:false, deviceId:null, activatedAt:null},
-      {code:"FAM-3A8B-4C5D", used:false, deviceId:null, activatedAt:null},
-      {code:"FAM-1Q2W-3E4R", used:false, deviceId:null, activatedAt:null},
-      {code:"FAM-5T6Y-7U8I", used:false, deviceId:null, activatedAt:null},
-      {code:"FAM-9O0P-1A2S", used:false, deviceId:null, activatedAt:null},
-    ]);
-  }
-}
+function showApp(){document.getElementById('activation-screen').style.display='none';document.getElementById('admin-screen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('license-name').textContent=localStorage.getItem('dftar_code')||'';initApp();}
 
-// ==================== التفعيل ====================
-function activate() {
-  const input = document.getElementById('code-input').value.trim().toUpperCase();
-  const err = document.getElementById('err-msg');
-  const ok = document.getElementById('ok-msg');
+function openAdmin(){const pw=prompt('أدخل كلمة سر الأدمن:');if(pw!=='admin123'){alert('❌ كلمة السر غلط');return;}document.getElementById('activation-screen').style.display='none';document.getElementById('app').style.display='none';document.getElementById('admin-screen').style.display='block';renderAdmin();}
+function backToApp(){document.getElementById('admin-screen').style.display='none';if(localStorage.getItem('dftar_activated')==='true'){showApp();}else{document.getElementById('activation-screen').style.display='flex';}}
 
-  if (!input) { err.textContent = '❌ اكتب الكود'; err.style.display='block'; ok.style.display='none'; return; }
+function renderAdmin(){const codes=getCodes();const tbody=document.getElementById('codes-list');tbody.innerHTML=codes.map((c,i)=>'<tr><td style="font-family:monospace;font-size:14px;">'+c.code+'</td><td class="'+(c.used?'used':'free')+'">'+(c.used?'❌ مستخدم':'✅ متاح')+'</td><td class="device">'+(c.deviceId||'-')+'</td><td>'+(c.activatedAt||'-')+'</td><td><button class="btn btn-red" style="padding:6px 12px;font-size:12px;" onclick="deleteCode('+i+')">🗑️</button></td></tr>').join('');}
+function addCode(){const val=document.getElementById('new-code').value.trim().toUpperCase();if(!val)return;if(!/^FAM-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(val)){alert('❌ الصيغة: FAM-XXXX-XXXX');return;}const codes=getCodes();if(codes.find(c=>c.code===val)){alert('❌ الكود موجود');return;}codes.push({code:val,used:false,deviceId:null,activatedAt:null});saveCodes(codes);document.getElementById('new-code').value='';renderAdmin();}
+function generateCode(){const r=()=>Math.random().toString(36).substring(2,6).toUpperCase();document.getElementById('new-code').value='FAM-'+r()+'-'+r();}
+function deleteCode(idx){const codes=getCodes();codes.splice(idx,1);saveCodes(codes);renderAdmin();}
+function clearAll(){if(!confirm('⚠️ هتمسح كل الأكواد؟'))return;saveCodes([]);renderAdmin();}
+function exportCodes(){const codes=getCodes();const text=JSON.stringify(codes,null,2);navigator.clipboard.writeText(text).then(()=>alert('✅ تم نسخ الأكواد!'));}
+function importCodes(){const text=prompt('📤 الصق النص المصدر هنا:');if(!text)return;try{const codes=JSON.parse(text);saveCodes(codes);renderAdmin();alert('✅ تم الاستيراد!');}catch{alert('❌ النص غلط');}}
 
-  const codes = getCodes();
-  const codeObj = codes.find(c => c.code === input);
+let incomeData=JSON.parse(localStorage.getItem('dftar_income'))||[];
+let expenseData=JSON.parse(localStorage.getItem('dftar_expense'))||[];
 
-  if (!codeObj) {
-    err.textContent = '❌ الكود غير موجود'; err.style.display='block'; ok.style.display='none'; return;
-  }
+function showTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));event.target.classList.add('active');document.getElementById(id).classList.add('active');if(id==='dash')updateDash();if(id==='income')renderIncome();if(id==='expense')renderExpense();if(id==='report')renderReport();}
+function saveData(){localStorage.setItem('dftar_income',JSON.stringify(incomeData));localStorage.setItem('dftar_expense',JSON.stringify(expenseData));}
+function addIncome(){const s=document.getElementById('inc-source').value;const a=parseFloat(document.getElementById('inc-amount').value);const d=document.getElementById('inc-date').value||new Date().toISOString().split('T')[0];if(!s||!a)return alert('اكمل البيانات');incomeData.push({id:Date.now(),source:s,amount:a,date:d});saveData();renderIncome();document.getElementById('inc-source').value='';document.getElementById('inc-amount').value='';}
+function delIncome(id){incomeData=incomeData.filter(x=>x.id!==id);saveData();renderIncome();}
+function renderIncome(){document.getElementById('income-list').innerHTML=incomeData.map(x=>'<tr><td>'+x.date+'</td><td>'+x.source+'</td><td style="color:#52b788;font-weight:700;">'+x.amount.toLocaleString()+'</td><td><button class="btn btn-red" style="padding:6px 10px;font-size:11px;" onclick="delIncome('+x.id+')">🗑️</button></td></tr>').join('');}
+function addExpense(){const c=document.getElementById('exp-cat').value;const i=document.getElementById('exp-item').value;const a=parseFloat(document.getElementById('exp-amount').value);const d=document.getElementById('exp-date').value||new Date().toISOString().split('T')[0];if(!c||!a)return alert('اكمل البيانات');expenseData.push({id:Date.now(),cat:c,item:i,amount:a,date:d});saveData();renderExpense();document.getElementById('exp-cat').value='';document.getElementById('exp-item').value='';document.getElementById('exp-amount').value='';}
+function delExpense(id){expenseData=expenseData.filter(x=>x.id!==id);saveData();renderExpense();}
+function renderExpense(){document.getElementById('expense-list').innerHTML=expenseData.map(x=>'<tr><td>'+x.date+'</td><td>'+x.cat+'</td><td>'+(x.item||'-')+'</td><td style="color:#ff6b6b;font-weight:700;">'+x.amount.toLocaleString()+'</td><td><button class="btn btn-red" style="padding:6px 10px;font-size:11px;" onclick="delExpense('+x.id+')">🗑️</button></td></tr>').join('');}
+function updateDash(){const totalInc=incomeData.reduce((s,x)=>s+x.amount,0);const totalExp=expenseData.reduce((s,x)=>s+x.amount,0);const remain=totalInc-totalExp;const saveRate=totalInc>0?((remain/totalInc)*100).toFixed(1):0;document.getElementById('dash-income').textContent=totalInc.toLocaleString();document.getElementById('dash-expense').textContent=totalExp.toLocaleString();document.getElementById('dash-remain').textContent=remain.toLocaleString();document.getElementById('dash-save').textContent=saveRate+'%';document.getElementById('gap-box').style.display=totalExp>totalInc*0.8?'block':'none';const cats={};expenseData.forEach(x=>{cats[x.cat]=(cats[x.cat]||0)+x.amount;});const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5);document.getElementById('top-cats').innerHTML=sorted.map(([c,a])=>'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(82,183,136,0.1);"><span style="font-size:13px;">'+c+'</span><span style="color:#ff6b6b;font-weight:700;font-size:13px;">'+a.toLocaleString()+'</span></div>').join('')||'<p style="color:#6c757d;font-size:13px;">لا توجد مصروفات</p>';}
+function renderReport(){const months={};incomeData.forEach(x=>{const m=x.date.slice(0,7);months[m]=months[m]||{inc:0,exp:0};months[m].inc+=x.amount;});expenseData.forEach(x=>{const m=x.date.slice(0,7);months[m]=months[m]||{inc:0,exp:0};months[m].exp+=x.amount;});document.getElementById('report-list').innerHTML=Object.entries(months).sort().reverse().map(([m,d])=>{const r=d.inc-d.exp;return'<tr><td>'+m+'</td><td style="color:#52b788">'+d.inc.toLocaleString()+'</td><td style="color:#ff6b6b">'+d.exp.toLocaleString()+'</td><td style="color:'+(r>=0?'#52b788':'#ff6b6b')+';font-weight:700">'+r.toLocaleString()+'</td></tr>';}).join('');}
+function initApp(){updateDash();renderIncome();renderExpense();renderReport();}
 
-  if (codeObj.used && codeObj.deviceId !== DEVICE_ID) {
-    err.textContent = '❌ الكود مستخدم على جهاز آخر (' + codeObj.deviceId + ')'; 
-    err.style.display='block'; ok.style.display='none'; return;
-  }
-
-  // تفعيل
-  codeObj.used = true;
-  codeObj.deviceId = DEVICE_ID;
-  codeObj.activatedAt = new Date().toLocaleString('ar-EG');
-  saveCodes(codes);
-
-  localStorage.setItem('dftar_activated', 'true');
-  localStorage.setItem('dftar_code', input);
-
-  ok.textContent = '✅ تم التفعيل بنجاح!'; ok.style.display='block'; err.style.display='none';
-  setTimeout(() => { showApp(); }, 800);
-}
-
-function showApp() {
-  document.getElementById('activation-screen').style.display = 'none';
-  document.getElementById('admin-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('license-name').textContent = localStorage.getItem('dftar_code') || '';
-  initApp();
-}
-
-// ==================== الأدمن ====================
-function openAdmin() {
-  const pw = prompt('أدخل كلمة سر الأدمن:');
-  if (pw !== 'admin123') { alert('❌ كلمة السر غلط'); return; }
-  document.getElementById('activation-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('admin-screen').style.display = 'block';
-  renderAdmin();
-}
-
-function backToApp() {
-  document.getElementById('admin-screen').style.display = 'none';
-  if (localStorage.getItem('dftar_activated') === 'true') {
-    showApp();
-  } else {
-    document.getElementById('activation-screen').style.display = 'flex';
-  }
-}
-
-function renderAdmin() {
-  const codes = getCodes();
-  const tbody = document.getElementById('codes-list');
-  tbody.innerHTML = codes.map((c, i) => `
-    <tr>
-      <td style="font-family:monospace; font-size:14px;">${c.code}</td>
-      <td class="${c.used ? 'used' : 'free'}">${c.used ? '❌ مستخدم' : '✅ متاح'}</td>
-      <td class="device">${c.deviceId || '-'}</td>
-      <td>${c.activatedAt || '-'}</td>
-      <td><button class="btn btn-red" style="padding:6px 12px; font-size:12px;" onclick="deleteCode(${i})">🗑️</button></td>
-    </tr>
-  `).join('');
-}
-
-function addCode() {
-  const val = document.getElementById('new-code').value.trim().toUpperCase();
-  if (!val) return;
-  if (!/^FAM-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(val)) { alert('❌ الصيغة: FAM-XXXX-XXXX'); return; }
-  const codes = getCodes();
-  if (codes.find(c => c.code === val)) { alert('❌ الكود موجود'); return; }
-  codes.push({code:val, used:false, deviceId:null, activatedAt:null});
-  saveCodes(codes);
-  document.getElementById('new-code').value = '';
-  renderAdmin();
-}
-
-function generateCode() {
-  const r = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-  document.getElementById('new-code').value = 'FAM-' + r() + '-' + r();
-}
-
-function deleteCode(idx) {
-  const codes = getCodes();
-  codes.splice(idx, 1);
-  saveCodes(codes);
-  renderAdmin();
-}
-
-function clearAll() {
-  if (!confirm('⚠️ هتمسح كل الأكواد؟')) return;
-  saveCodes([]);
-  renderAdmin();
-}
-
-function exportCodes() {
-  const codes = getCodes();
-  const text = JSON.stringify(codes, null, 2);
-  navigator.clipboard.writeText(text).then(() => alert('✅ تم نسخ الأكواد! احفظهم في مكان آمن.'));
-}
-
-function importCodes() {
-  const text = prompt('📤 الصق النص المصدر هنا:');
-  if (!text) return;
-  try {
-    const codes = JSON.parse(text);
-    saveCodes(codes);
-    renderAdmin();
-    alert('✅ تم الاستيراد!');
-  } catch { alert('❌ النص غلط'); }
-}
-
-// ==================== التطبيق ====================
-let incomeData = JSON.parse(localStorage.getItem('dftar_income')) || [];
-let expenseData = JSON.parse(localStorage.getItem('dftar_expense')) || [];
-
-function showTab(id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById(id).classList.add('active');
-  if (id === 'dash') updateDash();
-  if (id === 'income') renderIncome();
-  if (id === 'expense') renderExpense();
-  if (id === 'report') renderReport();
-}
-
-function saveData() {
-  localStorage.setItem('dftar_income', JSON.stringify(incomeData));
-  localStorage.setItem('dftar_expense', JSON.stringify(expenseData));
-}
-
-function addIncome() {
-  const s = document.getElementById('inc-source').value;
-  const a = parseFloat(document.getElementById('inc-amount').value);
-  const d = document.getElementById('inc-date').value || new Date().toISOString().split('T')[0];
-  if (!s || !a) return alert('اكمل البيانات');
-  incomeData.push({id:Date.now(), source:s, amount:a, date:d});
-  saveData(); renderIncome();
-  document.getElementById('inc-source').value='';
-  document.getElementById('inc-amount').value='';
-}
-function delIncome(id) { incomeData=incomeData.filter(x=>x.id!==id); saveData(); renderIncome(); }
-function renderIncome() {
-  document.getElementById('income-list').innerHTML = incomeData.map(x => `
-    <tr><td>${x.date}</td><td>${x.source}</td><td style="color:#52b788;font-weight:700;">${x.amount.toLocaleString()}</td>
-    <td><button class="btn btn-red" style="padding:6px 10px;font-size:11px;" onclick="delIncome(${x.id})">🗑️</button></td></tr>
-  `).join('');
-}
-
-function addExpense() {
-  const c = document.getElementById('exp-cat').value;
-  const i = document.getElementById('exp-item').value;
-  const a = parseFloat(document.getElementById('exp-amount').value);
-  const d = document.getElementById('exp-date').value || new Date().toISOString().split('T')[0];
-  if (!c || !a) return alert('اكمل البيانات');
-  expenseData.push({id:Date.now(), cat:c, item:i, amount:a, date:d});
-  saveData(); renderExpense();
-  document.getElementById('exp-cat').value='';
-  document.getElementById('exp-item').value='';
-  document.getElementById('exp-amount').value='';
-}
-function delExpense(id) { expenseData=expenseData.filter(x=>x.id!==id); saveData(); renderExpense(); }
-function renderExpense() {
-  document.getElementById('expense-list').innerHTML = expenseData.map(x => `
-    <tr><td>${x.date}</td><td>${x.cat}</td><td>${x.item||'-'}</td>
-    <td style="color:#ff6b6b;font-weight:700;">${x.amount.toLocaleString()}</td>
-    <td><button class="btn btn-red" style="padding:6px 10px;font-size:11px;" onclick="delExpense(${x.id})">🗑️</button></td></tr>
-  `).join('');
-}
-
-function updateDash() {
-  const totalInc = incomeData.reduce((s,x)=>s+x.amount,0);
-  const totalExp = expenseData.reduce((s,x)=>s+x.amount,0);
-  const remain = totalInc - totalExp;
-  const saveRate = totalInc > 0 ? ((remain/totalInc)*100).toFixed(1) : 0;
-
-  document.getElementById('dash-income').textContent = totalInc.toLocaleString();
-  document.getElementById('dash-expense').textContent = totalExp.toLocaleString();
-  document.getElementById('dash-remain').textContent = remain.toLocaleString();
-  document.getElementById('dash-save').textContent = saveRate + '%';
-
-  document.getElementById('gap-box').style.display = totalExp > totalInc * 0.8 ? 'block' : 'none';
-
-  const cats = {};
-  expenseData.forEach(x => { cats[x.cat] = (cats[x.cat]||0) + x.amount; });
-  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('top-cats').innerHTML = sorted.map(([c,a]) => `
-    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(82,183,136,0.1);">
-      <span style="font-size:13px;">${c}</span>
-      <span style="color:#ff6b6b;font-weight:700;font-size:13px;">${a.toLocaleString()}</span>
-    </div>
-  `).join('') || '<p style="color:#6c757d;font-size:13px;">لا توجد مصروفات</p>';
-}
-
-function renderReport() {
-  const months = {};
-  incomeData.forEach(x => { const m=x.date.slice(0,7); months[m]=months[m]||{inc:0,exp:0}; months[m].inc+=x.amount; });
-  expenseData.forEach(x => { const m=x.date.slice(0,7); months[m]=months[m]||{inc:0,exp:0}; months[m].exp+=x.amount; });
-  document.getElementById('report-list').innerHTML = Object.entries(months).sort().reverse().map(([m,d]) => {
-    const r=d.inc-d.exp;
-    return `<tr><td>${m}</td><td style="color:#52b788">${d.inc.toLocaleString()}</td>
-      <td style="color:#ff6b6b">${d.exp.toLocaleString()}</td>
-      <td style="color:${r>=0?'#52b788':'#ff6b6b'};font-weight:700">${r.toLocaleString()}</td></tr>`;
-  }).join('');
-}
-
-function initApp() {
-  updateDash(); renderIncome(); renderExpense(); renderReport();
-}
-
-// ==================== بدء التشغيل ====================
 initCodes();
-
-window.onload = function() {
-  // لو فيه hash #admin → افتح الأدمن
-  if (window.location.hash === '#admin') {
-    document.getElementById('activation-screen').style.display = 'none';
-    document.getElementById('admin-screen').style.display = 'block';
-    renderAdmin();
-    return;
-  }
-
-  if (localStorage.getItem('dftar_activated') === 'true') {
-    showApp();
-  }
-};
+window.onload=function(){if(window.location.hash==='#admin'){openAdmin();return;}if(localStorage.getItem('dftar_activated')==='true'){showApp();}};
 </script>
-
 </body>
-    </html>
+        </html>
