@@ -1,11 +1,11 @@
 {
-  "name": "دفتر العيلة",
-  "short_name": "دفتر العيلة",
-  "description": "متتبع المصروفات الشهري",
-  "start_url": "/",
+  "name": "مولد الفواتير السريع",
+  "short_name": "الفواتير",
+  "description": "أداة إنشاء فواتير وإيصالات سريعة للتجار والفريلانسرز",
+  "start_url": "/mahref-vault/",
   "display": "standalone",
-  "background_color": "#0a0f0d",
-  "theme_color": "#1b4332",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
   "orientation": "portrait",
   "icons": [
     {
