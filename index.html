@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مولد الفواتير السريع | أدوات التجار</title>
+  <title>مولد الفواتير السريع | PRO</title>
+  <link rel="manifest" href="/mahref-vault/manifest.json">
+  <meta name="theme-color" content="#2563eb">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -31,16 +33,16 @@
     label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; }
     input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
 
-    /* جدول المنتجات */
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ddd; padding: 8px; font-size: 13px; text-align: center; }
     th { background: #f8fafc; }
 
     .btn { background: var(--primary); color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+    .btn-wa { background: #25D366; color: #fff; }
     .btn-danger { background: #ef4444; }
     .btn-success { background: #10b981; }
 
-    /* شكل الفاتورة المعروضة */
+    /* معاينة الفاتورة */
     #invoice-preview { background: #fff; padding: 25px; border: 1px solid #eee; border-radius: 8px; }
     .inv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 15px; }
     .inv-logo { max-width: 80px; max-height: 80px; }
@@ -55,11 +57,11 @@
   <!-- شاشة التفعيل -->
   <div id="activation-screen">
     <div class="act-box">
-      <i class="fa-solid fa-lock fa-3x" style="color: var(--primary);"></i>
-      <h3 style="margin-top:10px;">تفعيل الأداة</h3>
-      <p style="font-size:12px; color:#666; margin-top:5px;">أدخل كود التفعيل الخاص بك للبدء</p>
+      <i class="fa-solid fa-shield-halved fa-3x" style="color: var(--primary);"></i>
+      <h3 style="margin-top:10px;">تفعيل الأداة الاحترافية</h3>
+      <p style="font-size:12px; color:#666; margin-top:5px;">أدخل كود التفعيل للبدء</p>
       <input type="text" id="license-key" placeholder="XXXX-XXXX-XXXX">
-      <button class="btn" onclick="activateApp()">تفعيل الآن</button>
+      <button class="btn" onclick="activateApp()">تفعيل الأداة</button>
       <p id="act-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
   </div>
@@ -67,30 +69,38 @@
   <!-- التطبيق الرئيسي -->
   <div class="container" id="main-app" style="display:none;">
     
-    <!-- مدخلات الفاتورة -->
+    <!-- مدخلات التاجر -->
     <div class="panel">
-      <h2><i class="fa-solid fa-pen-to-square"></i> بيانات الفاتورة</h2>
+      <h2><i class="fa-solid fa-sliders"></i> إعدادات الفاتورة</h2>
       
       <div class="form-group">
         <label>شعار المتجر (Logo)</label>
         <input type="file" id="logo-input" accept="image/*" onchange="loadLogo(event)">
       </div>
       <div class="form-group">
-        <label>اسم المتجر / الشركة</label>
-        <input type="text" id="store-name" value="أنامل فنية" oninput="updateInvoice()">
+        <label>اسم المتجر / البراند</label>
+        <input type="text" id="store-name" value="متجري الاحترافي" oninput="saveAndUpdate()">
       </div>
       <div class="form-group">
         <label>اسم العميل</label>
         <input type="text" id="client-name" value="خالد محمود" oninput="updateInvoice()">
       </div>
       <div class="form-group">
-        <label>رقم فودافون كاش / InstaPay للدفع</label>
-        <input type="text" id="pay-number" value="01011112222" oninput="updateInvoice()">
+        <label>رقم واتساب العميل (مع كود الدولة مثلاً 2010...)</label>
+        <input type="text" id="client-phone" placeholder="2010XXXXXXXX">
+      </div>
+      <div class="form-group">
+        <label>رقم فودافون كاش / المحفظة</label>
+        <input type="text" id="pay-number" value="01011112222" oninput="saveAndUpdate()">
+      </div>
+      <div class="form-group">
+        <label>رابط أو معرف إنستاباي (InstaPay)</label>
+        <input type="text" id="instapay-link" placeholder="username@instapay" oninput="saveAndUpdate()">
       </div>
 
-      <h3>المنتجات</h3>
+      <h3>إضافة المنتجات</h3>
       <div style="display:flex; gap:5px; margin-bottom:10px;">
-        <input type="text" id="p-name" placeholder="اسم المنتج">
+        <input type="text" id="p-name" placeholder="المنتج">
         <input type="number" id="p-qty" placeholder="الكمية" style="width:70px;">
         <input type="number" id="p-price" placeholder="السعر" style="width:90px;">
         <button class="btn btn-success" style="width:auto; margin:0;" onclick="addItem()">+</button>
@@ -102,22 +112,23 @@
       </div>
 
       <button class="btn btn-success" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> تحميل الفاتورة PDF</button>
+      <button class="btn btn-wa" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp"></i> إرسال تفاصيل الفاتورة عبر واتساب</button>
     </div>
 
-    <!-- المعاينة المباشرة للفاتورة -->
+    <!-- المعاينة المباشرة -->
     <div class="panel">
-      <h2><i class="fa-solid fa-eye"></i> معاينة الفاتورة</h2>
+      <h2><i class="fa-solid fa-file-invoice-dollar"></i> معاينة الفاتورة</h2>
       <div id="invoice-preview">
         <div class="inv-header">
           <div>
             <h3 id="inv-store-name">اسم المتجر</h3>
-            <p style="font-size:11px; color:#666;">فاتورة مبيعات سريعة</p>
+            <p style="font-size:11px; color:#666;">إيصال مبيعات رسمي</p>
           </div>
           <img id="inv-logo-img" class="inv-logo" src="" style="display:none;">
         </div>
 
         <div style="margin: 15px 0; font-size:13px;">
-          <p><strong>العميل:</strong> <span id="inv-client">---</span></p>
+          <p><strong>العميل المحترم:</strong> <span id="inv-client">---</span></p>
           <p><strong>التاريخ:</strong> <span id="inv-date"></span></p>
         </div>
 
@@ -137,8 +148,8 @@
 
         <div class="pay-info">
           <div>
-            <p style="font-size:11px; font-weight:bold;">طريقة الدفع المباشر:</p>
-            <p style="font-size:13px; color:var(--primary);" id="inv-pay-num">---</p>
+            <p style="font-size:11px; font-weight:bold;">وسائل الدفع المباشر:</p>
+            <p style="font-size:12px; color:var(--primary);" id="inv-pay-num">---</p>
           </div>
           <div id="qrcode"></div>
         </div>
@@ -147,26 +158,22 @@
 
   </div>
 
-  <!-- لوحة تحكم الأدمن (تفتح بـ #admin في آخر الرابط) -->
+  <!-- لوحة الأدمن -->
   <div id="admin-panel">
-    <h2><i class="fa-solid fa-user-shield"></i> لوحة تحكم الأدمن (إدارة الأكواد)</h2>
-    <p style="font-size:13px; margin-bottom:15px;">من هنا يمكنك إنشاء أكواد التفعيل وإلغائها.</p>
-
+    <h2><i class="fa-solid fa-user-gear"></i> لوحة تحكم الأدمن</h2>
     <button class="btn btn-success" style="width:auto;" onclick="generateCode()">توليد كود جديد</button>
-    <button class="btn btn-danger" style="width:auto;" onclick="clearAllCodes()">مسح كل الأكواد</button>
 
     <h3 style="margin-top:20px;">الأكواد المتاحة:</h3>
     <table style="margin-top:10px;">
       <thead>
-        <tr><th>كود التفعيل</th><th>الحالة</th><th>الجهاز المرتبط</th><th>إجراء</th></tr>
+        <tr><th>الكود</th><th>الحالة</th><th>الجهاز</th><th>إجراء</th></tr>
       </thead>
       <tbody id="admin-codes-list"></tbody>
     </table>
   </div>
 
   <script>
-    // قاعدة بيانات الأكواد الإفتراضية (تخزن في LocalStorage)
-    let defaultCodes = ["MAHMOUD-2026-X1", "VIP-STORE-99", "PRO-MAHREF-01"];
+    let defaultCodes = ["MAHMOUD-2026-X1", "PRO-KEY-99"];
     let items = [];
 
     function getCodes() {
@@ -174,19 +181,16 @@
     }
     function saveCodes(data) { localStorage.setItem('app_lic_keys', JSON.stringify(data)); }
 
-    // التحقق من التفعيل عند الفتح
     window.onload = function() {
       document.getElementById('inv-date').innerText = new Date().toLocaleDateString('ar-EG');
+      loadSavedMerchantData();
       
-      // فتح لوحة الأدمن لو الرابط فيه #admin
       if(window.location.hash === '#admin') {
         let pass = prompt("أدخل كلمة سر الأدمن:");
         if(pass === "123456") {
           document.getElementById('admin-panel').style.display = 'block';
           renderAdmin();
           return;
-        } else {
-          alert("كلمة السر خاطئة!");
         }
       }
 
@@ -196,9 +200,15 @@
         document.getElementById('main-app').style.display = 'grid';
         updateInvoice();
       }
+
+      // تسجيل الـ Service Worker لتثبيت التطبيق صح
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/mahref-vault/sw.js')
+          .then(reg => console.log('App Ready!'))
+          .catch(err => console.log('SW Error', err));
+      }
     };
 
-    // عملية تفعيل الأداة
     function activateApp() {
       let inputKey = document.getElementById('license-key').value.trim();
       let codes = getCodes();
@@ -210,13 +220,11 @@
         document.getElementById('act-msg').innerText = "كود التفعيل غير صحيح!";
         return;
       }
-
       if(found.usedBy && found.usedBy !== deviceId) {
-        document.getElementById('act-msg').innerText = "هذا الكود مستخدم بالفعل على جهاز آخر!";
+        document.getElementById('act-msg').innerText = "الكود مستخدم على جهاز آخر!";
         return;
       }
 
-      // ربط الكود بالجهاز الحالي
       found.usedBy = deviceId;
       saveCodes(codes);
       localStorage.setItem('activated_key', inputKey);
@@ -226,7 +234,25 @@
       updateInvoice();
     }
 
-    // إضافة منتج للفاتورة
+    function saveAndUpdate() {
+      localStorage.setItem('merchant_store_name', document.getElementById('store-name').value);
+      localStorage.setItem('merchant_pay_num', document.getElementById('pay-number').value);
+      localStorage.setItem('merchant_insta', document.getElementById('instapay-link').value);
+      updateInvoice();
+    }
+
+    function loadSavedMerchantData() {
+      if(localStorage.getItem('merchant_store_name')) {
+        document.getElementById('store-name').value = localStorage.getItem('merchant_store_name');
+      }
+      if(localStorage.getItem('merchant_pay_num')) {
+        document.getElementById('pay-number').value = localStorage.getItem('merchant_pay_num');
+      }
+      if(localStorage.getItem('merchant_insta')) {
+        document.getElementById('instapay-link').value = localStorage.getItem('merchant_insta');
+      }
+    }
+
     function addItem() {
       let name = document.getElementById('p-name').value;
       let qty = parseFloat(document.getElementById('p-qty').value) || 1;
@@ -241,15 +267,14 @@
       updateInvoice();
     }
 
-    // تحديث المعاينة المباشرة
     function updateInvoice() {
       document.getElementById('inv-store-name').innerText = document.getElementById('store-name').value;
       document.getElementById('inv-client').innerText = document.getElementById('client-name').value;
       
       let payNum = document.getElementById('pay-number').value;
-      document.getElementById('inv-pay-num').innerText = payNum;
+      let instaLink = document.getElementById('instapay-link').value;
+      document.getElementById('inv-pay-num').innerText = `فودافون كاش: ${payNum} | إنستاباي: ${instaLink}`;
 
-      // تحديث الجدول
       let tbody = document.getElementById('inv-items');
       tbody.innerHTML = '';
       let subtotal = 0;
@@ -260,30 +285,41 @@
       });
 
       let shipping = parseFloat(document.getElementById('shipping-cost').value) || 0;
+      let grandTotal = subtotal + shipping;
       document.getElementById('inv-shipping').innerText = shipping;
-      document.getElementById('inv-total').innerText = subtotal + shipping;
+      document.getElementById('inv-total').innerText = grandTotal;
 
-      // توليد الـ QR Code
+      // QR Code إنستاباي للدفع المباشر
       document.getElementById('qrcode').innerHTML = '';
-      if(payNum) {
-        new QRCode(document.getElementById("qrcode"), { text: payNum, width: 60, height: 60 });
+      if(instaLink) {
+        let payUrl = `https://instapay.bh/pay/${instaLink}?amount=${grandTotal}`;
+        new QRCode(document.getElementById("qrcode"), { text: payUrl, width: 70, height: 70 });
       }
     }
 
-    // رفع اللوجو
     function loadLogo(e) {
       let img = document.getElementById('inv-logo-img');
       img.src = URL.createObjectURL(e.target.files[0]);
       img.style.display = 'block';
     }
 
-    // تحميل الفاتورة PDF
     function downloadPDF() {
       let element = document.getElementById('invoice-preview');
-      html2pdf().from(element).save('invoice.pdf');
+      html2pdf().from(element).save('فاتورة.pdf');
     }
 
-    // --- وظائف لوحة الأدمن ---
+    function sendWhatsApp() {
+      let phone = document.getElementById('client-phone').value.trim();
+      let client = document.getElementById('client-name').value;
+      let total = document.getElementById('inv-total').innerText;
+      let store = document.getElementById('store-name').value;
+      let payNum = document.getElementById('pay-number').value;
+
+      let msg = `أهلاً بك أ/ ${client}🌹%0Aمرفق تفاصيل إيصال الطلب من *${store}*:%0A- الإجمالي النهائي: ${total} ج.م%0A- يمكنك التحويل عبر فودافون كاش: ${payNum}%0Aشكراً لتعاملك معنا!`;
+      
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
     function renderAdmin() {
       let codes = getCodes();
       let tbody = document.getElementById('admin-codes-list');
@@ -300,7 +336,7 @@
     }
 
     function generateCode() {
-      let newKey = "KEY-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+      let newKey = "PRO-" + Math.random().toString(36).substring(2, 7).toUpperCase();
       let codes = getCodes();
       codes.push({ key: newKey, usedBy: null });
       saveCodes(codes);
@@ -313,21 +349,6 @@
       saveCodes(codes);
       renderAdmin();
     }
-
-    function clearAll() {
-      if(confirm('سيتم مسح كل الأكواد!')) {
-        saveCodes([]);
-        renderAdmin();
-      }
-    }
   </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/mahref-vault/sw.js');
-    });
-  }
-</script>
-
 </body>
 </html>
