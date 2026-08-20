@@ -271,5 +271,15 @@ function initApp(){updateDash();renderIncome();renderExpense();renderReport();}
 initCodes();
 window.onload=function(){if(window.location.hash==='#admin'){openAdmin();return;}if(localStorage.getItem('dftar_activated')==='true'){showApp();}};
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/mahref-vault/sw.js')
+        .then(reg => console.log('Service Worker Registered!'))
+        .catch(err => console.log('Service Worker Failed:', err));
+    });
+  }
+</script>
+  
 </body>
       </html>
