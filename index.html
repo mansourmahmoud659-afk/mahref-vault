@@ -229,7 +229,7 @@
 
   <!-- Admin Panel -->
   <div id="admin-panel">
-    <h2><i class="fa-solid fa-user-shield"></i> لوحة الأدمن (إدارة الأكواد)</h2>
+    <h2><i class="fa-solid fa-user-shield"></i> لوحة الأدمن (إدارة الأكواد السحابية)</h2>
     <button class="btn" style="width:auto; margin-bottom:20px;" onclick="generateCode()">توليد كود جديد</button>
     <table class="inv-table">
       <thead><tr><th>الكود</th><th>الحالة</th><th>الجهاز</th><th>إجراء</th></tr></thead>
@@ -238,13 +238,12 @@
   </div>
 
   <script>
-    let defaultCodes = ["MAHMOUD-2026-X1", "PRO-KEY-99"];
+    // رابط قاعدة البيانات السحابية الخاضعة لسيطرتك
+    const FIREBASE_URL = "https://invoicepro-637cf-default-rtdb.firebaseio.com/keys";
+
     let items = [];
     let invoiceCount = parseInt(localStorage.getItem('inv_count')) || 0;
     let totalSales = parseFloat(localStorage.getItem('inv_sales')) || 0;
-
-    function getCodes() { return JSON.parse(localStorage.getItem('app_lic_keys')) || defaultCodes.map(k => ({key: k, usedBy: null})); }
-    function saveCodes(data) { localStorage.setItem('app_lic_keys', JSON.stringify(data)); }
 
     window.onload = function() {
       document.getElementById('inv-date').innerText = new Date().toLocaleDateString('ar-EG');
@@ -271,23 +270,40 @@
       }
     };
 
-    function activateApp() {
+    async function activateApp() {
       let inputKey = document.getElementById('license-key').value.trim();
-      let codes = getCodes();
       let deviceId = navigator.userAgent.replace(/\D+/g, '').slice(0, 10);
-      let found = codes.find(c => c.key === inputKey);
+      document.getElementById('act-msg').innerText = "جاري التحقق من السيرفر...";
 
-      if(!found || (found.usedBy && found.usedBy !== deviceId)) {
-        document.getElementById('act-msg').innerText = "كود غير صالح أو مستخدم!";
-        return;
+      try {
+        let res = await fetch(`${FIREBASE_URL}/${inputKey}.json`);
+        let data = await res.json();
+
+        if(!data) {
+          document.getElementById('act-msg').innerText = "الكود غير موجود!";
+          return;
+        }
+
+        if(data.usedBy && data.usedBy !== deviceId) {
+          document.getElementById('act-msg').innerText = "الكود مستخدم بالفعل على جهاز آخر!";
+          return;
+        }
+
+        // تسجيل جهاز العميل في قاعدة البيانات السحابية
+        await fetch(`${FIREBASE_URL}/${inputKey}.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usedBy: deviceId, status: 'مُفعل' })
+        });
+
+        localStorage.setItem('activated_key', inputKey);
+        document.getElementById('activation-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        updateInvoice();
+
+      } catch(e) {
+        document.getElementById('act-msg').innerText = "خطأ في الاتصال بالسيرفر!";
       }
-
-      found.usedBy = deviceId;
-      saveCodes(codes);
-      localStorage.setItem('activated_key', inputKey);
-      document.getElementById('activation-screen').style.display = 'none';
-      document.getElementById('main-app').style.display = 'block';
-      updateInvoice();
     }
 
     function changeTheme(color) {
@@ -389,27 +405,43 @@
       img.style.display = 'block';
     }
 
-    function renderAdmin() {
-      let codes = getCodes();
-      let tbody = document.getElementById('admin-codes-list');
-      tbody.innerHTML = '';
-      codes.forEach((c, idx) => {
-        tbody.innerHTML += `<tr><td><strong>${c.key}</strong></td><td>${c.usedBy ? 'مُفعل' : 'متاح'}</td><td>${c.usedBy || '---'}</td><td><button class="btn btn-danger" onclick="deleteCode(${idx})">حذف</button></td></tr>`;
-      });
+    async function renderAdmin() {
+      try {
+        let res = await fetch(`${FIREBASE_URL}.json`);
+        let data = await res.json() || {};
+        let tbody = document.getElementById('admin-codes-list');
+        tbody.innerHTML = '';
+        
+        Object.keys(data).forEach(key => {
+          let item = data[key];
+          tbody.innerHTML += `<tr><td><strong>${key}</strong></td><td>${item.status || (item.usedBy ? 'مُفعل' : 'متاح')}</td><td>${item.usedBy || '---'}</td><td><button class="btn btn-danger" onclick="deleteCode('${key}')">حذف</button></td></tr>`;
+        });
+      } catch(e) {
+        console.error("خطأ في تحميل الأكواد من السيرفر", e);
+      }
     }
 
-    function generateCode() {
-      let codes = getCodes();
-      codes.push({ key: "PRO-" + Math.random().toString(36).substring(2, 7).toUpperCase(), usedBy: null });
-      saveCodes(codes);
-      renderAdmin();
+    async function generateCode() {
+      let newKey = "PRO-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+      try {
+        await fetch(`${FIREBASE_URL}/${newKey}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'متاح', usedBy: null })
+        });
+        renderAdmin();
+      } catch(e) {
+        alert("فشل في إنشاء الكود على السيرفر!");
+      }
     }
 
-    function deleteCode(idx) {
-      let codes = getCodes();
-      codes.splice(idx, 1);
-      saveCodes(codes);
-      renderAdmin();
+    async function deleteCode(key) {
+      try {
+        await fetch(`${FIREBASE_URL}/${key}.json`, { method: 'DELETE' });
+        renderAdmin();
+      } catch(e) {
+        alert("فشل في حذف الكود!");
+      }
     }
   </script>
 </body>
