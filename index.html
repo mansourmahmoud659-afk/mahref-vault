@@ -1,187 +1,494 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد الفواتير الاحترافي | InvoicePro</title>
-    <link rel="manifest" href="/mahref-vault/manifest.json">
-    <meta name="theme-color" content="#4f46e5">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
-        
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مولد الفواتير الاحترافي | InvoicePro</title>
+  <link rel="manifest" href="/mahref-vault/manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+    
+    :root { 
+      --primary: #4f46e5; 
+      --primary-dark: #4338ca;
+      --bg: #f8fafc; 
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --inv-color: #4f46e5;
+    }
 
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            direction: rtl;
-        }
+    * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); padding: 20px; }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
+    /* شريط التنبيه التجريبي */
+    .trial-banner {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 12px 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+      margin: 0 auto 20px;
+      max-width: 1200px;
+      border: 1px solid #c7d2fe;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-        }
+    /* شاشة التفعيل الفخمة */
+    #activation-screen {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .act-box { 
+      background: #fff; padding: 40px; border-radius: 20px; width: 90%; max-width: 420px; 
+      text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .act-icon { width: 70px; height: 70px; background: #e0e7ff; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
+    .act-box input { width: 100%; padding: 14px; margin: 18px 0; border: 2px solid #e2e8f0; border-radius: 12px; text-align: center; font-size: 18px; font-weight: bold; letter-spacing: 2px; }
+    .act-box input:focus { border-color: var(--primary); outline: none; }
 
-        .header h1 {
-            color: var(--primary);
-            margin: 0 0 10px 0;
-            font-size: 28px;
-        }
+    /* Layout */
+    .app-header { max-width: 1200px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+    .stats-bar { max-width: 1200px; margin: 0 auto 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .stat-card { background: #fff; padding: 15px 20px; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px; }
+    .stat-icon { width: 45px; height: 45px; border-radius: 10px; background: #e0e7ff; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+    .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+    @media(max-width: 900px) { .container, .stats-bar { grid-template-columns: 1fr; } }
+    
+    .panel { background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+    .panel-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--text); border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #475569; }
+    input, select { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 14px; transition: 0.2s; }
+    input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; margin-top: 10px; font-size: 15px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-wa { background: #25D366; } .btn-wa:hover { background: #1da851; }
+    .btn-danger { background: #ef4444; }
 
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            font-size: 16px;
-            transition: background 0.3s;
-        }
+    /* تصميم الفاتورة الـ Premium */
+    #invoice-preview { background: #fff; padding: 35px; border-radius: 12px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .inv-top-bar { height: 6px; background: var(--inv-color); position: absolute; top:0; left:0; right:0; }
+    .inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+    .inv-logo { max-width: 90px; max-height: 90px; border-radius: 8px; }
+    
+    .inv-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: #dcfce7; color: #15803d; margin-top: 5px; }
 
-        .btn:hover {
-            background-color: var(--primary-hover);
-        }
+    .inv-table { width: 100%; border-collapse: collapse; margin: 25px 0; }
+    .inv-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: right; font-size: 12px; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+    .inv-table td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
 
-        .alert-info {
-            background-color: #e0e7ff;
-            color: #3730a3;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-        }
-    </style>
+    .inv-total-box { background: #f8fafc; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #e2e8f0; }
+    .inv-total-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 14px; }
+    .inv-total-row.grand { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 10px; font-size: 18px; font-weight: 800; color: var(--inv-color); }
+
+    .pay-card { background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%); padding: 15px; border-radius: 12px; margin-top: 25px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #c7d2fe; }
+
+    /* Admin Panel */
+    #admin-panel { display: none; position: fixed; inset: 0; background: #fff; z-index: 10000; padding: 30px; overflow-y: auto; }
+  </style>
 </head>
 <body>
 
-<div class="container" id="appSection">
-    <div class="header">
-        <h1><i class="fa-solid fa-file-invoice"></i> InvoicePro</h1>
-        <p>أداة إصدار الفواتير الاحترافية الشاملة</p>
+  <!-- شاشة التفعيل -->
+  <div id="activation-screen">
+    <div class="act-box">
+      <div class="act-icon"><i class="fa-solid fa-bolt"></i></div>
+      <h2>تفعيل InvoicePro</h2>
+      <p style="font-size:13px; color:#64748b; margin-top:5px;">انتهت الفترة المجانية. أدخل كود التفعيل المخصص لمتجرك للبدء</p>
+      <input type="text" id="license-key" placeholder="PRO-XXXXX">
+      <button class="btn" onclick="activateApp()">تفعيل الحساب الآن</button>
+      <p style="font-size:12px; color:#475569; margin-top:15px;">لطلب كود التفعيل بـ 100 جنيه فقط مدى الحياة:<br>تواصل معنا عبر الواتساب: <strong>01153528451</strong></p>
+      <p id="act-msg" style="color:#ef4444; font-size:13px; margin-top:12px; font-weight:bold;"></p>
+    </div>
+  </div>
+
+  <!-- Header & Stats -->
+  <div id="main-app">
+    
+    <div id="trial-notice" class="trial-banner">
+      ℹ️ النسخة التجريبية: استخدمت (<span id="trial-count">0</span> من 5) فواتير مجانية.
     </div>
 
-    <div class="alert-info" id="trialNotice">
-        ℹ️ نظام التجربة: لديك 5 فواتير مجانية بالكامل.
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
+        <div><p style="font-size:12px; color:#64748b;">إجمالي الفواتير</p><h3 id="stat-count">0</h3></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+        <div><p style="font-size:12px; color:#64748b;">إجمالي المبيعات</p><h3 id="stat-sales">0 ج.م</h3></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-palette"></i></div>
+        <div>
+          <p style="font-size:12px; color:#64748b; margin-bottom:4px;">ثيم الفاتورة</p>
+          <input type="color" id="theme-picker" value="#4f46e5" onchange="changeTheme(this.value)" style="height:30px; padding:2px; cursor:pointer;">
+        </div>
+      </div>
     </div>
 
-    <form id="invoiceForm" onsubmit="return false;">
-        <div class="form-group">
-            <label>اسم العميل / الشركة:</label>
-            <input type="text" id="clientName" placeholder="أدخل اسم العميل" required>
-        </div>
-
-        <div class="form-group">
-            <label>تفاصيل المنتج / الخدمة:</label>
-            <textarea id="itemDescription" rows="3" placeholder="تفاصيل الفاتورة..." required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>المبلغ الإجمالي (جنيه):</label>
-            <input type="number" id="totalAmount" placeholder="0.00" required>
-        </div>
-
-        <button type="button" class="btn" id="generateBtn"><i class="fa-solid fa-download"></i> إنشاء وتحميل الفاتورة PDF</button>
-    </form>
-</div>
-
-<script>
-    // تجاوز وحذف أي شاشة تفعيل أولية لضمان عمل الواجهة فوراً
-    document.addEventListener('DOMContentLoaded', () => {
-        const activationModals = document.querySelectorAll('#activationSection, .activation-modal, #lockScreen, .lock-screen');
-        activationModals.forEach(el => el.remove());
-
-        const mainApp = document.getElementById('appSection');
-        if (mainApp) mainApp.style.display = 'block';
-
-        updateNotice();
-    });
-
-    function updateNotice() {
-        const isActivated = localStorage.getItem('invoice_activated') === 'true';
-        const noticeEl = document.getElementById('trialNotice');
+    <div class="container">
+      
+      <!-- لوحة التحكم في البيانات -->
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-pen-nib"></i> بيانات الفاتورة والعميل</div>
         
-        if (isActivated) {
-            if (noticeEl) noticeEl.style.display = 'none';
-        } else {
-            let usageCount = parseInt(localStorage.getItem('invoice_count')) || 0;
-            if (noticeEl) {
-                noticeEl.innerText = `ℹ️ النسخة التجريبية: استخدمت (${usageCount} من 5) فواتير مجانية.`;
-            }
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label>شعار المتجر</label>
+            <input type="file" id="logo-input" accept="image/*" onchange="loadLogo(event)">
+          </div>
+          <div class="form-group">
+            <label>حالة الفاتورة</label>
+            <select id="inv-status" onchange="updateInvoice()">
+              <option value="مدفوع">مدفوع ✅</option>
+              <option value="قيد الانتظار">قيد الانتظار ⏳</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>اسم متجرك / البراند</label>
+          <input type="text" id="store-name" value="أنامل فنية" oninput="saveAndUpdate()">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label>اسم العميل</label>
+            <input type="text" id="client-name" value="خالد محمود" oninput="updateInvoice()">
+          </div>
+          <div class="form-group">
+            <label>واتساب العميل (مع كود الدولة)</label>
+            <input type="text" id="client-phone" placeholder="2010XXXXXXXX">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label>رقم المحفظة (فودافون كاش)</label>
+            <input type="text" id="pay-number" value="01011112222" oninput="saveAndUpdate()">
+          </div>
+          <div class="form-group">
+            <label>معرف InstaPay</label>
+            <input type="text" id="instapay-link" value="username@instapay" oninput="saveAndUpdate()">
+          </div>
+        </div>
+
+        <label style="margin-top:10px;">إضافة منتج للفاتورة</label>
+        <div style="display:flex; gap:8px; margin-bottom:15px;">
+          <input type="text" id="p-name" placeholder="اسم المنتج" style="flex:2;">
+          <input type="number" id="p-qty" placeholder="الكمية" style="flex:1;">
+          <input type="number" id="p-price" placeholder="السعر" style="flex:1;">
+          <button class="btn" style="width:auto; margin:0; padding:0 18px;" onclick="addItem()">+</button>
+        </div>
+
+        <div class="form-group">
+          <label>رسوم الشحن (جنيه)</label>
+          <input type="number" id="shipping-cost" value="50" oninput="updateInvoice()">
+        </div>
+
+        <button class="btn" onclick="downloadPDF()"><i class="fa-solid fa-download"></i> تحميل الفاتورة PDF</button>
+        <button class="btn btn-wa" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp"></i> إرسال عبر واتساب</button>
+      </div>
+
+      <!-- المعاينة المباشرة الفخمة -->
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-eye"></i> الفاتورة المباشرة</div>
+        
+        <div id="invoice-preview">
+          <div class="inv-top-bar" id="inv-bar-color"></div>
+          
+          <div class="inv-header">
+            <div>
+              <h2 id="inv-store-name" style="font-weight:800; font-size:22px;">اسم المتجر</h2>
+              <span class="inv-badge" id="inv-status-badge">مدفوع ✅</span>
+            </div>
+            <img id="inv-logo-img" class="inv-logo" src="" style="display:none;">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; background:#f8fafc; padding:12px; border-radius:8px; font-size:13px;">
+            <div><strong>مقدمة إلى:</strong> <span id="inv-client">---</span></div>
+            <div><strong>التاريخ:</strong> <span id="inv-date"></span></div>
+          </div>
+
+          <table class="inv-table">
+            <thead>
+              <tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr>
+            </thead>
+            <tbody id="inv-items"></tbody>
+          </table>
+
+          <div class="inv-total-box">
+            <div class="inv-total-row"><span>المجموع الفرعي:</span><span id="inv-subtotal">0 ج.م</span></div>
+            <div class="inv-total-row"><span>الشحن:</span><span id="inv-shipping">0 ج.م</span></div>
+            <div class="inv-total-row grand"><span>المجمالي النهائي:</span><span id="inv-total">0 ج.م</span></div>
+          </div>
+
+          <div class="pay-card">
+            <div>
+              <p style="font-size:11px; font-weight:bold; color:#475569;">طرق الدفع السريع:</p>
+              <p style="font-size:12px; font-weight:bold; margin-top:2px;" id="inv-pay-num">---</p>
+            </div>
+            <div id="qrcode"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel">
+    <h2><i class="fa-solid fa-user-shield"></i> لوحة الأدمن (إدارة الأكواد السحابية)</h2>
+    <button class="btn" style="width:auto; margin-bottom:20px;" onclick="generateCode()">توليد كود جديد</button>
+    <table class="inv-table">
+      <thead><tr><th>الكود</th><th>الحالة</th><th>الجهاز</th><th>إجراء</th></tr></thead>
+      <tbody id="admin-codes-list"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const FIREBASE_URL = "https://invoicepro-637cf-default-rtdb.firebaseio.com/keys";
+
+    let items = [];
+    let invoiceCount = parseInt(localStorage.getItem('inv_count')) || 0;
+    let totalSales = parseFloat(localStorage.getItem('inv_sales')) || 0;
+
+    window.onload = function() {
+      document.getElementById('inv-date').innerText = new Date().toLocaleDateString('ar-EG');
+      loadSavedMerchantData();
+      updateStats();
+
+      if(window.location.hash === '#admin') {
+        let pass = prompt("كلمة السر:");
+        if(pass === "123456") {
+          document.getElementById('admin-panel').style.display = 'block';
+          renderAdmin();
+          return;
         }
+      }
+
+      // التحقق من حالة التفعيل أول ما يفتح الموقع
+      if (!localStorage.getItem('activated_key') && invoiceCount >= 5) {
+        showActivationScreen();
+      } else {
+        updateInvoice();
+      }
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/mahref-vault/sw.js');
+      }
+    };
+
+    function showActivationScreen() {
+      document.getElementById('activation-screen').style.display = 'flex';
+      document.getElementById('main-app').style.display = 'none';
     }
 
-    // زر إخراج الفاتورة والتحقق من الحد الأقصى (5 مرات)
-    document.getElementById('generateBtn').addEventListener('click', function() {
-        const isActivated = localStorage.getItem('invoice_activated') === 'true';
+    async function activateApp() {
+      let inputKey = document.getElementById('license-key').value.trim();
+      let deviceId = navigator.userAgent.replace(/\D+/g, '').slice(0, 10);
+      document.getElementById('act-msg').innerText = "جاري التحقق من السيرفر...";
 
-        if (!isActivated) {
-            let usageCount = parseInt(localStorage.getItem('invoice_count')) || 0;
+      try {
+        let res = await fetch(`${FIREBASE_URL}/${inputKey}.json`);
+        let data = await res.json();
 
-            if (usageCount >= 5) {
-                alert("⚠️ انتهت الفترة المجانية (5 فواتير).\n\nلتفعيل الأداة مدى الحياة بـ 100 جنيه فقط، تواصل معنا عبر الواتساب:\n01153528451");
-                return;
-            }
-
-            usageCount++;
-            localStorage.setItem('invoice_count', usageCount);
-            updateNotice();
-            alert(`تنبيه: تم إنشاء الفاتورة بنجاح! هذه هي الفاتورة رقم (${usageCount} من 5) في النسخة التجريبية.`);
-        } else {
-            alert("تم إنشاء الفاتورة بنجاح (حساب مفعل مدى الحياة).");
+        if(!data) {
+          document.getElementById('act-msg').innerText = "الكود غير موجود!";
+          return;
         }
 
-        // تنفيذ منطق الطباعة أو حفظ الـ PDF
-        window.print();
-    });
-</script>
+        if(data.usedBy && data.usedBy !== deviceId) {
+          document.getElementById('act-msg').innerText = "الكود مستخدم بالفعل على جهاز آخر!";
+          return;
+        }
 
+        await fetch(`${FIREBASE_URL}/${inputKey}.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usedBy: deviceId, status: 'مُفعل' })
+        });
+
+        localStorage.setItem('activated_key', inputKey);
+        document.getElementById('activation-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        updateInvoice();
+
+      } catch(e) {
+        document.getElementById('act-msg').innerText = "خطأ في الاتصال بالسيرفر!";
+      }
+    }
+
+    function changeTheme(color) {
+      document.documentElement.style.setProperty('--inv-color', color);
+      document.getElementById('inv-bar-color').style.background = color;
+    }
+
+    function addItem() {
+      let name = document.getElementById('p-name').value;
+      let qty = parseFloat(document.getElementById('p-qty').value) || 1;
+      let price = parseFloat(document.getElementById('p-price').value) || 0;
+      if(!name) return;
+      items.push({ name, qty, price, total: qty * price });
+      document.getElementById('p-name').value = '';
+      document.getElementById('p-qty').value = '';
+      document.getElementById('p-price').value = '';
+      updateInvoice();
+    }
+
+    function updateInvoice() {
+      document.getElementById('inv-store-name').innerText = document.getElementById('store-name').value;
+      document.getElementById('inv-client').innerText = document.getElementById('client-name').value;
+      
+      let status = document.getElementById('inv-status').value;
+      let badge = document.getElementById('inv-status-badge');
+      badge.innerText = status;
+      badge.style.background = status === 'مدفوع' ? '#dcfce7' : '#fef3c7';
+      badge.style.color = status === 'مدفوع' ? '#15803d' : '#d97706';
+
+      let payNum = document.getElementById('pay-number').value;
+      let instaLink = document.getElementById('instapay-link').value;
+      document.getElementById('inv-pay-num').innerText = `فودافون كاش: ${payNum} | InstaPay: ${instaLink}`;
+
+      let tbody = document.getElementById('inv-items');
+      tbody.innerHTML = '';
+      let subtotal = 0;
+
+      items.forEach(item => {
+        subtotal += item.total;
+        tbody.innerHTML += `<tr><td><strong>${item.name}</strong></td><td>${item.qty}</td><td>${item.price} ج.م</td><td><strong>${item.total} ج.م</strong></td></tr>`;
+      });
+
+      let shipping = parseFloat(document.getElementById('shipping-cost').value) || 0;
+      let grandTotal = subtotal + shipping;
+      document.getElementById('inv-subtotal').innerText = subtotal + ' ج.م';
+      document.getElementById('inv-shipping').innerText = shipping + ' ج.م';
+      document.getElementById('inv-total').innerText = grandTotal + ' ج.م';
+
+      document.getElementById('qrcode').innerHTML = '';
+      if(instaLink) {
+        new QRCode(document.getElementById("qrcode"), { text: `https://instapay.bh/pay/${instaLink}?amount=${grandTotal}`, width: 65, height: 65 });
+      }
+    }
+
+    function saveAndUpdate() {
+      localStorage.setItem('merchant_store_name', document.getElementById('store-name').value);
+      localStorage.setItem('merchant_pay_num', document.getElementById('pay-number').value);
+      localStorage.setItem('merchant_insta', document.getElementById('instapay-link').value);
+      updateInvoice();
+    }
+
+    function loadSavedMerchantData() {
+      if(localStorage.getItem('merchant_store_name')) document.getElementById('store-name').value = localStorage.getItem('merchant_store_name');
+      if(localStorage.getItem('merchant_pay_num')) document.getElementById('pay-number').value = localStorage.getItem('merchant_pay_num');
+      if(localStorage.getItem('merchant_insta')) document.getElementById('instapay-link').value = localStorage.getItem('merchant_insta');
+    }
+
+    function downloadPDF() {
+      if (!localStorage.getItem('activated_key')) {
+        if (invoiceCount >= 5) {
+          alert("⚠️ انتهت الفترة المجانية (5 فواتير).\n\nلتفعيل الأداة مدى الحياة بـ 100 جنيه فقط، تواصل معنا عبر الواتساب:\n01153528451");
+          showActivationScreen();
+          return;
+        }
+      }
+
+      let element = document.getElementById('invoice-preview');
+      html2pdf().from(element).save('فاتورة.pdf');
+      
+      invoiceCount++;
+      let total = parseFloat(document.getElementById('inv-total').innerText) || 0;
+      totalSales += total;
+      localStorage.setItem('inv_count', invoiceCount);
+      localStorage.setItem('inv_sales', totalSales);
+      updateStats();
+
+      if (!localStorage.getItem('activated_key')) {
+        if (invoiceCount >= 5) {
+          alert("⚠️ هذه هي الفاتورة الخامسة والأخيرة في النسخة المجانية.\nيرجى التفعيل للاستمرار في استخدام الأداة.");
+          showActivationScreen();
+        } else {
+          alert(`تنبيه: تم إنشاء الفاتورة بنجاح! (الفاتورة رقم ${invoiceCount} من 5 في النسخة التجريبية)`);
+        }
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('stat-count').innerText = invoiceCount;
+      document.getElementById('stat-sales').innerText = totalSales + ' ج.م';
+      
+      if (localStorage.getItem('activated_key')) {
+        document.getElementById('trial-notice').style.display = 'none';
+      } else {
+        document.getElementById('trial-count').innerText = invoiceCount;
+      }
+    }
+
+    function sendWhatsApp() {
+      let phone = document.getElementById('client-phone').value.trim();
+      let client = document.getElementById('client-name').value;
+      let total = document.getElementById('inv-total').innerText;
+      let store = document.getElementById('store-name').value;
+      let payNum = document.getElementById('pay-number').value;
+
+      let msg = `أهلاً بك أ/ ${client} 🌸%0Aتفاصيل فاتورتك من *${store}*:%0A- الإجمالي: *${total}*%0A- تحويل فودافون كاش: ${payNum}%0Aشكراً لعملك معنا!`;
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+    function loadLogo(e) {
+      let img = document.getElementById('inv-logo-img');
+      img.src = URL.createObjectURL(e.target.files[0]);
+      img.style.display = 'block';
+    }
+
+    async function renderAdmin() {
+      try {
+        let res = await fetch(`${FIREBASE_URL}.json`);
+        let data = await res.json() || {};
+        let tbody = document.getElementById('admin-codes-list');
+        tbody.innerHTML = '';
+        
+        Object.keys(data).forEach(key => {
+          let item = data[key];
+          tbody.innerHTML += `<tr><td><strong>${key}</strong></td><td>${item.status || (item.usedBy ? 'مُفعل' : 'متاح')}</td><td>${item.usedBy || '---'}</td><td><button class="btn btn-danger" onclick="deleteCode('${key}')">حذف</button></td></tr>`;
+        });
+      } catch(e) {
+        console.error("خطأ في تحميل الأكواد من السيرفر", e);
+      }
+    }
+
+    async function generateCode() {
+      let newKey = "PRO-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+      try {
+        await fetch(`${FIREBASE_URL}/${newKey}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'متاح', usedBy: null })
+        });
+        renderAdmin();
+      } catch(e) {
+        alert("فشل في إنشاء الكود على السيرفر!");
+      }
+    }
+
+    async function deleteCode(key) {
+      try {
+        await fetch(`${FIREBASE_URL}/${key}.json`, { method: 'DELETE' });
+        renderAdmin();
+      } catch(e) {
+        alert("فشل في حذف الكود!");
+      }
+    }
+  </script>
 </body>
 </html>
-كس امك كود الاداة القديمه كان ٤٠٠
