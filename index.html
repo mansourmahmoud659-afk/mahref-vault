@@ -443,46 +443,37 @@
         alert("فشل في حذف الكود!");
       }
     }
-    // نظام التجربة المجانية (5 مرات)
-(function checkTrial() {
-    let isActivated = localStorage.getItem('invoice_activated');
-    
-    if (isActivated === 'true') {
-        return; // الحساب مفعل بجميع الصلاحيات
-    }
-
-    let usageCount = parseInt(localStorage.getItem('invoice_count')) || 0;
-
-    // البحث عن زر إنشاء/تحميل الفاتورة لحمايته
-    window.addEventListener('DOMContentLoaded', () => {
-        const createBtn = document.querySelector('button[onclick*="generate"], button[onclick*="print"], .btn-primary');
-        
-        if (createBtn) {
-            createBtn.addEventListener('click', function(e) {
-                if (localStorage.getItem('invoice_activated') === 'true') return;
-
-                if (usageCount >= 5) {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    alert("⚠️ انتهت الفترة المجانية (5 فواتير).\n\nلتفعيل الأداة مدى الحياة بـ 100 جنيه فقط، تواصل عبر الواتساب: 01153528451");
-                    return false;
-                }
-
-                usageCount++;
-                localStorage.setItem('invoice_count', usageCount);
-                alert(`تنبيه: هذه هي الفاتورة رقم (${usageCount} من 5) في النسخة التجريبية.`);
-            }, true);
-        }
-    });
-})();
-    // إلغاء قفل الشاشة الأولي وإتاحة التجربة المجانية مباشرة
+// تدمير شاشة التفعيل المزعجة وإتاحة الأداة بالكامل فوراً
 window.addEventListener('DOMContentLoaded', () => {
-    // إظهار واجهة الأداة الرئيسية وإخفاء شاشة التفعيل إن وجدت
-    const mainApp = document.getElementById('appSection') || document.querySelector('.main-content') || document.body;
-    const lockScreen = document.getElementById('activationSection') || document.querySelector('.activation-modal');
+    // إخفاء وحذف أي شاشة تفعيل أو قفل تظهر للعميل
+    const lockScreens = document.querySelectorAll('#activationSection, .activation-modal, .lock-screen, #lockScreen');
+    lockScreens.forEach(el => el.remove());
+
+    // إجبار واجهة الأداة على الظهور والعمل
+    const mainContent = document.body;
+    if (mainContent) mainContent.style.display = 'block';
+
+    // نظام الـ 5 فواتير المجانية
+    let usageCount = parseInt(localStorage.getItem('invoice_count')) || 0;
     
-    if (lockScreen) lockScreen.style.display = 'none';
-    if (mainApp) mainApp.style.display = 'block';
+    // مراقبة أزرار إنشاء الفاتورة
+    document.addEventListener('click', function(e) {
+        if (e.target && (e.target.innerText.includes('إنشاء') || e.target.innerText.includes('تحميل') || e.target.id.includes('generate') || e.target.id.includes('print'))) {
+            
+            if (localStorage.getItem('invoice_activated') === 'true') return;
+
+            if (usageCount >= 5) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                alert("⚠️ انتهت الفترة المجانية (5 فواتير).\n\nلتفعيل الأداة مدى الحياة بـ 100 جنيه فقط، تواصل عبر الواتساب: 01153526451");
+                return false;
+            }
+
+            usageCount++;
+            localStorage.setItem('invoice_count', usageCount);
+            alert(`تنبيه: هذه هي الفاتورة رقم (${usageCount} من 5) في النسخة التجريبية.`);
+        }
+    }, true);
 });
 
   </script>
