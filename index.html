@@ -443,6 +443,38 @@
         alert("فشل في حذف الكود!");
       }
     }
+    // نظام التجربة المجانية (5 مرات)
+(function checkTrial() {
+    let isActivated = localStorage.getItem('invoice_activated');
+    
+    if (isActivated === 'true') {
+        return; // الحساب مفعل بجميع الصلاحيات
+    }
+
+    let usageCount = parseInt(localStorage.getItem('invoice_count')) || 0;
+
+    // البحث عن زر إنشاء/تحميل الفاتورة لحمايته
+    window.addEventListener('DOMContentLoaded', () => {
+        const createBtn = document.querySelector('button[onclick*="generate"], button[onclick*="print"], .btn-primary');
+        
+        if (createBtn) {
+            createBtn.addEventListener('click', function(e) {
+                if (localStorage.getItem('invoice_activated') === 'true') return;
+
+                if (usageCount >= 5) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    alert("⚠️ انتهت الفترة المجانية (5 فواتير).\n\nلتفعيل الأداة مدى الحياة بـ 100 جنيه فقط، تواصل عبر الواتساب: 01153526451");
+                    return false;
+                }
+
+                usageCount++;
+                localStorage.setItem('invoice_count', usageCount);
+                alert(`تنبيه: هذه هي الفاتورة رقم (${usageCount} من 5) في النسخة التجريبية.`);
+            }, true);
+        }
+    });
+})();
   </script>
 </body>
 </html>
